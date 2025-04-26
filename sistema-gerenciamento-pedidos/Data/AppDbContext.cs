@@ -5,6 +5,7 @@ using sistema_gerenciamento_pedidos.Models.EnderecoCliente;
 using sistema_gerenciamento_pedidos.Models.EnderecoFuncionario;
 using sistema_gerenciamento_pedidos.Models.Funcionarios;
 using sistema_gerenciamento_pedidos.Models.Pedidos;
+using sistema_gerenciamento_pedidos.Models.Produtos;
 
 namespace sistema_gerenciamento_pedidos.Data
 {
@@ -20,5 +21,6 @@ namespace sistema_gerenciamento_pedidos.Data
         public DbSet<ClienteModel> Cliente { get; set; }
         public DbSet<EnderecoClienteModel> EnderecoCliente { get; set; }
         public DbSet<PedidoModel> Pedido { get; set; }
+        public DbSet<ProdutoModel> Produto { get; set; }
     }
 }
