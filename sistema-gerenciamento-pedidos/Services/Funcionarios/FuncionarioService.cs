@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using sistema_gerenciamento_pedidos.Data;
 using sistema_gerenciamento_pedidos.Dto.Funcionario.Request;
 using sistema_gerenciamento_pedidos.Dto.Funcionario.Response;
+using sistema_gerenciamento_pedidos.Dto.Login.Request;
 using sistema_gerenciamento_pedidos.Dto.Model.Response;
 using sistema_gerenciamento_pedidos.Models.EnderecoFuncionario;
 using sistema_gerenciamento_pedidos.Models.Funcionarios;
@@ -64,6 +65,51 @@ namespace sistema_gerenciamento_pedidos.Services.Funcionarios
 
                 response.Mensagem = "Funcionário cadastrado com sucesso";
                 response.Dados = funcionarioResponse;
+
+                return response;
+            }
+            catch (Exception ex)
+            {
+                response.Mensagem = ex.Message;
+                response.Status = false;
+
+                return response;
+            }
+        }
+
+        public async Task<ResponseModel<FuncionarioModel>> Login(LoginDto loginDto)
+        {
+            ResponseModel<FuncionarioModel> response = new ResponseModel<FuncionarioModel>();
+
+            try
+            {
+                var funcionario = await _appDbContext.Funcionario.FirstOrDefaultAsync(x => x.NomeUsuario == loginDto.NomeUsuario);
+
+                if (funcionario == null)
+                {
+                    response.Mensagem = "Usuário não localizado!";
+                    response.Status = false;
+
+                    return response;
+                }
+
+                if (!_senhaService.VerificaSenhaHash(loginDto.Senha, funcionario.SenhaHash, funcionario.SenhaSalt))
+                {
+                    response.Mensagem = "Credenciais inválidas!";
+                    response.Status = false;
+
+                    return response;
+                }
+
+                var token = _senhaService.CriarToken(funcionario);
+
+                funcionario.Token = token;
+
+                _appDbContext.Update(funcionario);
+                await _appDbContext.SaveChangesAsync();
+
+                response.Dados = funcionario;
+                response.Mensagem = "Usuário logado com sucesso!";
 
                 return response;
             }

@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using sistema_gerenciamento_pedidos.Dto.Funcionario.Request;
 using sistema_gerenciamento_pedidos.Dto.Funcionario.Response;
 using sistema_gerenciamento_pedidos.Services.Funcionarios.Interfaces;
@@ -7,6 +8,7 @@ namespace sistema_gerenciamento_pedidos.Controllers.Funcionarios
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class FuncionarioController : ControllerBase
     {
         private readonly IFuncionarioService _funcionarioService;

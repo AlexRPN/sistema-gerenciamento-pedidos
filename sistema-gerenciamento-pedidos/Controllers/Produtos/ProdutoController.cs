@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using sistema_gerenciamento_pedidos.Dto.Produto.Request;
 using sistema_gerenciamento_pedidos.Dto.Produto.Response;
@@ -8,6 +9,7 @@ namespace sistema_gerenciamento_pedidos.Controllers.Produtos
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class ProdutoController : ControllerBase
     {
         private readonly IProdutoService _produtoService;
