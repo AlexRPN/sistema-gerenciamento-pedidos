@@ -1,0 +1,6 @@
+@sistema_gerenciamento_pedidos_HostAddress = http://localhost:5221
+
+GET {{sistema_gerenciamento_pedidos_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
