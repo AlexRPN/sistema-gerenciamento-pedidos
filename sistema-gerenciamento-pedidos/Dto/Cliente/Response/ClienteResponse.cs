@@ -1,0 +1,12 @@
+﻿namespace sistema_gerenciamento_pedidos.Dto.Cliente.Response
+{
+    public class ClienteResponse
+    {
+        public int Id { get; set; }
+        public string Nome { get; set; }
+        public string Telefone { get; set; }
+        public string Situacao { get; set; }
+        public string PerfilAcesso { get; set; }
+        public DateTime DataCadastro { get; set; }
+    }
+}
