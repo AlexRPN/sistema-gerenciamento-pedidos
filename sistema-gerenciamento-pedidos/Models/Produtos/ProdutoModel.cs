@@ -1,5 +1,6 @@
 ﻿using sistema_gerenciamento_pedidos.Enums;
 using sistema_gerenciamento_pedidos.Models.Empresas;
+using sistema_gerenciamento_pedidos.Models.PedidoProduto;
 
 namespace sistema_gerenciamento_pedidos.Models.Produtos
 {
@@ -19,5 +20,7 @@ namespace sistema_gerenciamento_pedidos.Models.Produtos
         //Relacionamento entre as tabelas EMPRESA x PRODUTO
         public int EmpresaId { get; set; }
         public EmpresaModel Empresa { get; set; }
+
+        public ICollection<PedidoProdutoModel> PedidoProdutos { get; set; }
     }
 }

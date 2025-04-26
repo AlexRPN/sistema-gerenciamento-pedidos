@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using sistema_gerenciamento_pedidos.Data;
 
@@ -11,9 +12,11 @@ using sistema_gerenciamento_pedidos.Data;
 namespace sistema_gerenciamento_pedidos.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250426133847_SincronizarPedidoProduto")]
+    partial class SincronizarPedidoProduto
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -244,7 +247,7 @@ namespace sistema_gerenciamento_pedidos.Migrations
                     b.Property<int>("StatusPedido")
                         .HasColumnType("int");
 
-                    b.Property<decimal>("ValorUnitario")
+                    b.Property<decimal>("ValorTotal")
                         .HasColumnType("decimal(18,2)");
 
                     b.HasKey("Id");

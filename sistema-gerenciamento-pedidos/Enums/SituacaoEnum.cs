@@ -3,6 +3,6 @@
     public enum SituacaoEnum
     {
         Inativo = 0,
-        Ativo = 1        
+        Ativo = 1
     }
 }
