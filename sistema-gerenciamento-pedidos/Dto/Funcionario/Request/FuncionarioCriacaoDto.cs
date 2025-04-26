@@ -1,4 +1,5 @@
-﻿using sistema_gerenciamento_pedidos.Enums;
+﻿using sistema_gerenciamento_pedidos.Dto.EnderecoFuncionario.Request;
+using sistema_gerenciamento_pedidos.Enums;
 using System.ComponentModel.DataAnnotations;
 
 namespace sistema_gerenciamento_pedidos.Dto.Funcionario.Request
@@ -20,5 +21,6 @@ namespace sistema_gerenciamento_pedidos.Dto.Funcionario.Request
         public PerfilAcessoEnum PerfilAcesso { get; set; }
         [Required(ErrorMessage = "Informe o Id da empresa a qual o funcionário será vinculado")]
         public int EmpresaId { get; set; }
+        public EnderecoFuncionarioCriacaoDto Endereco { get; set; }
     }
 }

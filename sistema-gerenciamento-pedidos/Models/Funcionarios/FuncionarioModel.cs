@@ -1,5 +1,6 @@
 ﻿using sistema_gerenciamento_pedidos.Enums;
 using sistema_gerenciamento_pedidos.Models.Empresas;
+using sistema_gerenciamento_pedidos.Models.EnderecoFuncionario;
 
 namespace sistema_gerenciamento_pedidos.Models.Funcionarios
 {
@@ -20,5 +21,7 @@ namespace sistema_gerenciamento_pedidos.Models.Funcionarios
         //Relacionamento de tabelas EMPRESA x FUNCIONARIO
         public int EmpresaId { get; set; }
         public EmpresaModel Empresa { get; set; }
+
+        public EnderecoFuncionarioModel EnderecoFuncionario { get; set; }
     }
 }

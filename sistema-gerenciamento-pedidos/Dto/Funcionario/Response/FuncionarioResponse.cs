@@ -1,4 +1,5 @@
 ﻿using sistema_gerenciamento_pedidos.Dto.Empresa.Response;
+using sistema_gerenciamento_pedidos.Dto.EnderecoFuncionario.Response;
 
 namespace sistema_gerenciamento_pedidos.Dto.Funcionario.Response
 {
@@ -12,5 +13,6 @@ namespace sistema_gerenciamento_pedidos.Dto.Funcionario.Response
         public string DataCriacao { get; set; }
         public string PerfilAcesso { get; set; }
         public EmpresaResponse Empresa { get; set; }
+        public EnderecoFuncionarioResponse Endereco { get; set; }
     }
 }
