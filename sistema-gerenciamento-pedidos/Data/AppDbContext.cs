@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using sistema_gerenciamento_pedidos.Models.Empresas;
 
 namespace sistema_gerenciamento_pedidos.Data
 {
@@ -6,7 +7,8 @@ namespace sistema_gerenciamento_pedidos.Data
     {
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
         {
-            
         }
+
+        public DbSet<EmpresaModel> Empresa { get; set; }
     }
 }
