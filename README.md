@@ -1,5 +1,8 @@
-Pacotes utilizados para conexão com banco de dados (VERSÃO 8.0.6):
-* EntityFrameworkCore
-* EntityFrameworkCore.Desig
-* EntityFrameworkCore.SqlServer
-* EntityFrameworkCore.Tools
+Pacotes utilizados no projeto:
+* EntityFrameworkCore (8.0.6)
+* EntityFrameworkCore.Desig (8.0.6)
+* EntityFrameworkCore.SqlServer (8.0.6)
+* EntityFrameworkCore.Tools (8.0.6)
+* AutoMapper (14.0.0)
+* AspNetCore.Authentication.JwBearer (8.0.15)
+* Swashbuckle.AspNetCore.Filters (8.0.2)
