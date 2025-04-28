@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using sistema_gerenciamento_pedidos.Dto.Login.Request;
 using sistema_gerenciamento_pedidos.Services.Funcionarios.Interfaces;
 

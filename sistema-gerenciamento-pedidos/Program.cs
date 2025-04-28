@@ -2,10 +2,12 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using sistema_gerenciamento_pedidos.Data;
+using sistema_gerenciamento_pedidos.Services.Cliente;
+using sistema_gerenciamento_pedidos.Services.Cliente.Interfaces;
 using sistema_gerenciamento_pedidos.Services.Funcionarios;
 using sistema_gerenciamento_pedidos.Services.Funcionarios.Interfaces;
-using sistema_gerenciamento_pedidos.Services.Produtos.Interfaces;
 using sistema_gerenciamento_pedidos.Services.Produtos;
+using sistema_gerenciamento_pedidos.Services.Produtos.Interfaces;
 using sistema_gerenciamento_pedidos.Services.Senha;
 using sistema_gerenciamento_pedidos.Services.Senha.Interface;
 using Swashbuckle.AspNetCore.Filters;
@@ -31,6 +33,7 @@ builder.Services.AddSwaggerGen(c =>
 builder.Services.AddScoped<ISenhaService, SenhaService>();
 builder.Services.AddScoped<IFuncionarioService, FuncionarioService>();
 builder.Services.AddScoped<IProdutoService, ProdutoService>();
+builder.Services.AddScoped<IClienteService, ClienteService>();
 
 
 builder.Services.AddDbContext<AppDbContext>(options =>

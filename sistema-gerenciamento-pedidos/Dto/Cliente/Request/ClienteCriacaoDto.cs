@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using sistema_gerenciamento_pedidos.Dto.EnderecoCliente.Request;
+using System.ComponentModel.DataAnnotations;
 
 namespace sistema_gerenciamento_pedidos.Dto.Cliente.Request
 {
@@ -10,5 +11,7 @@ namespace sistema_gerenciamento_pedidos.Dto.Cliente.Request
         public string Telefone { get; set; }
         [Required(ErrorMessage = "Informe o Id da empresa que o cliente será cadastrado")]
         public int EmpresaId { get; set; }
+
+        public EnderecoClienteCriacaoDto Endereco { get; set; }
     }
 }
