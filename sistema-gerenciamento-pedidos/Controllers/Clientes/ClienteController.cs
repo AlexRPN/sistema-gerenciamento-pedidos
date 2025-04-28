@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using sistema_gerenciamento_pedidos.Dto.Cliente.Request;
 using sistema_gerenciamento_pedidos.Dto.Cliente.Response;
+using sistema_gerenciamento_pedidos.Dto.Model.Response;
 using sistema_gerenciamento_pedidos.Services.Cliente.Interfaces;
 
 namespace sistema_gerenciamento_pedidos.Controllers.Clientes
@@ -27,6 +28,53 @@ namespace sistema_gerenciamento_pedidos.Controllers.Clientes
         public async Task<ActionResult<ClienteResponse>> Cadastrar(ClienteCriacaoDto clienteCriacaoDto)
         {
             var cliente = await _clienteService.Cadastrar(clienteCriacaoDto);
+            return Ok(cliente);
+        }
+
+        /// <summary>
+        /// Lista todos os clientes
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet]
+        public async Task<ActionResult<List<ClienteResponse>>> Listar()
+        {
+            var clientes = await _clienteService.Listar();
+            return Ok(clientes);
+        }
+
+        /// <summary>
+        /// Edita os dados do cliente
+        /// </summary>
+        /// <param name="clienteEdicaoDto"></param>
+        /// <returns></returns>
+        [HttpPut]
+        public async Task<ActionResult> Editar(ClienteEdicaoDto clienteEdicaoDto)
+        {
+            var cliente = await _clienteService.Editar(clienteEdicaoDto);
+            return Ok(cliente);
+        }
+
+        /// <summary>
+        /// Busca Cliente por id
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        [HttpGet("{id}")]
+        public async Task<ActionResult<ResponseModel<ClienteResponse>>> BuscarClientePorId(int id)
+        {
+            var cliente = await _clienteService.BuscarClientePorId(id);
+            return Ok(cliente);
+        }
+
+        /// <summary>
+        /// Inativa o cliente
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        [HttpPut("{id}")]
+        public async Task<ActionResult> Inativar(int id)
+        {
+            var cliente = await _clienteService.Inativar(id);
             return Ok(cliente);
         }
     }
