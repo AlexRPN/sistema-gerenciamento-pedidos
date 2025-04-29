@@ -9,5 +9,8 @@ namespace sistema_gerenciamento_pedidos.Services.Pedidos.Interfaces
     {
         Task<ResponseModel<PedidoResponse>> Cadastrar(PedidoCriacaoDto pedidoCriacaoDto);
         Task<ResponseModel<List<PedidoResponse>>> Listar(StatusPedidoEnum? statusFiltro = null);
+        Task<ResponseModel<PedidoResponse>> BuscarPedidoPorId(int id);
+        Task<ResponseModel<PedidoResponse>> CancelarPedido(int id);
+        Task<ResponseModel<PedidoResponse>> EditarPedido(PedidoEdicaoDto pedidoEdicaoDto);
     }
 }

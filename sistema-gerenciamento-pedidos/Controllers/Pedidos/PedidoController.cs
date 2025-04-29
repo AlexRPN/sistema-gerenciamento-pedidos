@@ -43,5 +43,41 @@ namespace sistema_gerenciamento_pedidos.Controllers.Pedidos
             var resultado = await _pedidoService.Listar(statusFiltro);
             return Ok(resultado);
         }
+
+        /// <summary>
+        /// Busca pedido por Id
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        [HttpGet("{id}")]
+        public async Task<ActionResult<ResponseModel<PedidoResponse>>> BuscarPedidoPorId(int id)
+        {
+            var pedido = await _pedidoService.BuscarPedidoPorId(id);
+            return Ok(pedido);
+        }
+
+        /// <summary>
+        /// Cancela o pedido
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        [HttpPut("{id}")]
+        public async Task<ActionResult<ResponseModel<PedidoResponse>>> CancelarPedido(int id)
+        {
+            var pedido = await _pedidoService.CancelarPedido(id);
+            return Ok(pedido);
+        }
+
+        /// <summary>
+        /// Edita o pedido
+        /// </summary>
+        /// <param name="pedidoEdicao"></param>
+        /// <returns></returns>
+        [HttpPut]
+        public async Task<ActionResult<ResponseModel<PedidoResponse>>> EditarPedido(PedidoEdicaoDto pedidoEdicao)
+        {
+            var pedido = await _pedidoService.EditarPedido(pedidoEdicao);
+            return Ok(pedido);
+        }
     }
 }

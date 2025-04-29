@@ -27,6 +27,69 @@ namespace sistema_gerenciamento_pedidos.Services.Pedidos
             _mapper = mapper;
         }
 
+        public async Task<ResponseModel<PedidoResponse>> BuscarPedidoPorId(int id)
+        {
+            ResponseModel<PedidoResponse> response = new ResponseModel<PedidoResponse>();
+
+            try
+            {
+                var pedido = await _appDbContext.Pedido
+                    .Include(p => p.PedidoProdutos)
+                        .ThenInclude(pp => pp.Produto)
+                    .Include(p => p.Cliente)
+                        .ThenInclude(c => c.EnderecoCliente)
+                    .FirstOrDefaultAsync(p => p.Id == id);
+
+                if (pedido == null)
+                {
+                    response.Mensagem = "Pedido não localizado no sistema!";
+                    response.Status = false;
+                    return response;
+                }
+
+                var pedidoResponse = new PedidoResponse
+                {
+                    Id = pedido.Id,
+                    ValorTotal = pedido.ValorTotal,
+                    DataPedido = pedido.DataPedido,
+                    StatusPedido = pedido.StatusPedido,
+                    Cliente = new ClientePedidoResponse
+                    {
+                        Nome = pedido.Cliente.Nome,
+                        Telefone = pedido.Cliente.Telefone,
+                        Endereco = pedido.Cliente.EnderecoCliente != null
+                            ? new EnderecoClienteResponse
+                            {
+                                Logradouro = pedido.Cliente.EnderecoCliente.Logradouro,
+                                Complemento = pedido.Cliente.EnderecoCliente.Complemento,
+                                Cep = pedido.Cliente.EnderecoCliente.Cep
+                            }
+                            : null
+                    },
+                    Produtos = pedido.PedidoProdutos.Select(pp => new PedidoProdutoResponse
+                    {
+                        ProdutoId = pp.ProdutoId,
+                        Quantidade = pp.Quantidade,
+                        ValorUnitario = pp.ValorUnitario,
+                        Observacao = pp.Observacao,
+                        NomeProduto = pp.Produto != null ? pp.Produto.Nome : null
+                    }).ToList()
+                };
+
+                response.Status = true;
+                response.Mensagem = "Pedido localizado com sucesso!";
+                response.Dados = pedidoResponse;
+                return response;
+            }
+            catch (Exception ex)
+            {
+                response.Mensagem = ex.Message;
+                response.Status = false;
+                return response;
+            }
+        }
+
+
         public async Task<ResponseModel<PedidoResponse>> Cadastrar(PedidoCriacaoDto pedidoCriacaoDto)
         {
             ResponseModel<PedidoResponse> response = new ResponseModel<PedidoResponse>();
@@ -147,6 +210,191 @@ namespace sistema_gerenciamento_pedidos.Services.Pedidos
                 return response;
             }
         }
+
+        public async Task<ResponseModel<PedidoResponse>> CancelarPedido(int id)
+        {
+            var response = new ResponseModel<PedidoResponse>();
+
+            try
+            {
+                var pedido = await _appDbContext.Pedido
+                    .Include(p => p.PedidoProdutos)
+                        .ThenInclude(pp => pp.Produto)
+                    .Include(p => p.Cliente)
+                        .ThenInclude(c => c.EnderecoCliente)
+                    .FirstOrDefaultAsync(p => p.Id == id);
+
+                if (pedido == null)
+                {
+                    response.Mensagem = "Pedido não localizado no sistema!";
+                    response.Status = false;
+                    return response;
+                }
+
+                if (pedido.StatusPedido != StatusPedidoEnum.EmPreparacao)
+                {
+                    response.Mensagem = "Só é possível cancelar pedidos com status Em Preparação!";
+                    response.Status = false;
+                    return response;
+                }
+
+                pedido.StatusPedido = StatusPedidoEnum.Cancelado;
+
+                _appDbContext.Pedido.Update(pedido);
+                await _appDbContext.SaveChangesAsync();
+
+                var pedidoResponse = new PedidoResponse
+                {
+                    Id = pedido.Id,
+                    ValorTotal = pedido.ValorTotal,
+                    DataPedido = pedido.DataPedido,
+                    StatusPedido = pedido.StatusPedido,
+                    Cliente = new ClientePedidoResponse
+                    {
+                        Nome = pedido.Cliente.Nome,
+                        Telefone = pedido.Cliente.Telefone,
+                        Endereco = pedido.Cliente.EnderecoCliente != null
+                            ? new EnderecoClienteResponse
+                            {
+                                Logradouro = pedido.Cliente.EnderecoCliente.Logradouro,
+                                Complemento = pedido.Cliente.EnderecoCliente.Complemento,
+                                Cep = pedido.Cliente.EnderecoCliente.Cep
+                            }
+                            : null
+                    },
+                    Produtos = pedido.PedidoProdutos.Select(pp => new PedidoProdutoResponse
+                    {
+                        ProdutoId = pp.ProdutoId,
+                        Quantidade = pp.Quantidade,
+                        Observacao = pp.Observacao,
+                        ValorUnitario = pp.ValorUnitario,
+                        NomeProduto = pp.Produto?.Nome
+                    }).ToList()
+                };
+
+                response.Status = true;
+                response.Mensagem = "Pedido cancelado com sucesso!";
+                response.Dados = pedidoResponse;
+                return response;
+            }
+            catch (Exception ex)
+            {
+                response.Mensagem = ex.Message;
+                response.Status = false;
+                return response;
+            }
+        }
+
+        public async Task<ResponseModel<PedidoResponse>> EditarPedido(PedidoEdicaoDto pedidoEdicaoDto)
+        {
+            var response = new ResponseModel<PedidoResponse>();
+
+            try
+            {
+                // Carrega o pedido com seus relacionamentos
+                var pedido = await _appDbContext.Pedido
+                    .Include(p => p.PedidoProdutos)
+                    .Include(p => p.Cliente)
+                        .ThenInclude(c => c.EnderecoCliente)
+                    .FirstOrDefaultAsync(p => p.Id == pedidoEdicaoDto.Id);
+
+                if (pedido == null)
+                {
+                    response.Mensagem = "Pedido não localizado no sistema!";
+                    response.Status = false;
+                    return response;
+                }
+
+                if (pedido.StatusPedido != StatusPedidoEnum.EmPreparacao)
+                {
+                    response.Mensagem = "Só é possível editar pedidos com status Em Preparação!";
+                    response.Status = false;
+                    return response;
+                }
+
+                // Validação do novo cliente
+                var clienteValido = await _appDbContext.Cliente
+                    .Include(c => c.EnderecoCliente)
+                    .FirstOrDefaultAsync(c => c.Id == pedidoEdicaoDto.ClienteId);
+
+                if (clienteValido == null || clienteValido.Situacao != SituacaoEnum.Ativo)
+                {
+                    response.Mensagem = "Cliente inválido ou inativo!";
+                    response.Status = false;
+                    return response;
+                }
+
+                // Atualiza o cliente do pedido
+                pedido.ClienteId = pedidoEdicaoDto.ClienteId;
+
+                // Remove os produtos antigos
+                _appDbContext.PedidoProduto.RemoveRange(pedido.PedidoProdutos);
+
+                // Adiciona os novos produtos
+                pedido.PedidoProdutos = pedidoEdicaoDto.PedidoProdutos.Select(produtoDto => new PedidoProdutoModel
+                {
+                    ProdutoId = produtoDto.ProdutoId,
+                    Quantidade = produtoDto.Quantidade,
+                    ValorUnitario = produtoDto.ValorUnitario,
+                    Observacao = produtoDto.Observacao
+                }).ToList();
+
+                // Recalcula o valor total
+                pedido.ValorTotal = pedido.PedidoProdutos.Sum(pp => pp.Quantidade * pp.ValorUnitario);
+
+                _appDbContext.Pedido.Update(pedido);
+                await _appDbContext.SaveChangesAsync();
+
+                // Carrega novamente com os relacionamentos completos
+                var pedidoAtualizado = await _appDbContext.Pedido
+                    .Include(p => p.PedidoProdutos)
+                        .ThenInclude(pp => pp.Produto)
+                    .Include(p => p.Cliente)
+                        .ThenInclude(c => c.EnderecoCliente)
+                    .FirstOrDefaultAsync(p => p.Id == pedido.Id);
+
+                var pedidoResponse = new PedidoResponse
+                {
+                    Id = pedidoAtualizado.Id,
+                    ValorTotal = pedidoAtualizado.ValorTotal,
+                    DataPedido = pedidoAtualizado.DataPedido,
+                    StatusPedido = pedidoAtualizado.StatusPedido,
+                    Cliente = new ClientePedidoResponse
+                    {
+                        Nome = pedidoAtualizado.Cliente.Nome,
+                        Telefone = pedidoAtualizado.Cliente.Telefone,
+                        Endereco = pedidoAtualizado.Cliente.EnderecoCliente != null
+                            ? new EnderecoClienteResponse
+                            {
+                                Logradouro = pedidoAtualizado.Cliente.EnderecoCliente.Logradouro,
+                                Complemento = pedidoAtualizado.Cliente.EnderecoCliente.Complemento,
+                                Cep = pedidoAtualizado.Cliente.EnderecoCliente.Cep
+                            }
+                            : null
+                    },
+                    Produtos = pedidoAtualizado.PedidoProdutos.Select(pp => new PedidoProdutoResponse
+                    {
+                        ProdutoId = pp.ProdutoId,
+                        Quantidade = pp.Quantidade,
+                        ValorUnitario = pp.ValorUnitario,
+                        Observacao = pp.Observacao,
+                        NomeProduto = pp.Produto?.Nome
+                    }).ToList()
+                };
+
+                response.Status = true;
+                response.Mensagem = "Pedido atualizado com sucesso!";
+                response.Dados = pedidoResponse;
+                return response;
+            }
+            catch (Exception ex)
+            {
+                response.Mensagem = ex.Message;
+                response.Status = false;
+                return response;
+            }
+        }
+
 
         public async Task<ResponseModel<List<PedidoResponse>>> Listar(StatusPedidoEnum? statusFiltro = null)
         {
