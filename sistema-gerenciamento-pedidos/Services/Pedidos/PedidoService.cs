@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Hangfire;
 using Microsoft.EntityFrameworkCore;
 using sistema_gerenciamento_pedidos.Data;
 using sistema_gerenciamento_pedidos.Dto.Cliente.Response;
@@ -11,6 +12,7 @@ using sistema_gerenciamento_pedidos.Enums;
 using sistema_gerenciamento_pedidos.Models.PedidoProduto;
 using sistema_gerenciamento_pedidos.Models.Pedidos;
 using sistema_gerenciamento_pedidos.Services.Pedidos.Interfaces;
+using sistema_gerenciamento_pedidos.Services.PedidosJob;
 
 namespace sistema_gerenciamento_pedidos.Services.Pedidos
 {
@@ -79,6 +81,11 @@ namespace sistema_gerenciamento_pedidos.Services.Pedidos
 
                 _appDbContext.Add(pedido);
                 await _appDbContext.SaveChangesAsync();
+
+                BackgroundJob.Schedule<PedidoJobService>(
+                    job => job.AtualizarStatusParaAguardandoEntrega(pedido.Id),
+                    TimeSpan.FromMinutes(1)
+                );
 
                 // Carregar o pedido com os produtos e os detalhes do produto
                 var pedidoCompleto = await _appDbContext.Pedido
