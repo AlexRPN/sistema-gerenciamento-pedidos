@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using sistema_gerenciamento_pedidos.Dto.Model.Response;
 using sistema_gerenciamento_pedidos.Dto.Pedido.Request;
 using sistema_gerenciamento_pedidos.Dto.Pedido.Response;
+using sistema_gerenciamento_pedidos.Enums;
 using sistema_gerenciamento_pedidos.Services.Pedidos.Interfaces;
 
 namespace sistema_gerenciamento_pedidos.Controllers.Pedidos
@@ -29,6 +30,18 @@ namespace sistema_gerenciamento_pedidos.Controllers.Pedidos
         {
             var pedido = await _pedidoService.Cadastrar(pedidoCriacaoDto);
             return Ok(pedido);
+        }
+
+        /// <summary>
+        /// Lista os pedidos pelo status
+        /// </summary>
+        /// <param name="statusFiltro"></param>
+        /// <returns></returns>
+        [HttpGet]
+        public async Task<IActionResult> Listar([FromQuery] StatusPedidoEnum? statusFiltro)
+        {
+            var resultado = await _pedidoService.Listar(statusFiltro);
+            return Ok(resultado);
         }
     }
 }

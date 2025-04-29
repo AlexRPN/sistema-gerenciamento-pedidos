@@ -140,5 +140,74 @@ namespace sistema_gerenciamento_pedidos.Services.Pedidos
                 return response;
             }
         }
+
+        public async Task<ResponseModel<List<PedidoResponse>>> Listar(StatusPedidoEnum? statusFiltro = null)
+        {
+            ResponseModel<List<PedidoResponse>> response = new ResponseModel<List<PedidoResponse>>();
+
+            try
+            {
+                var query = _appDbContext.Pedido
+                    .Include(p => p.PedidoProdutos)
+                        .ThenInclude(pp => pp.Produto)
+                    .Include(p => p.Cliente)
+                        .ThenInclude(c => c.EnderecoCliente)
+                    .AsQueryable();
+
+                if (statusFiltro.HasValue)
+                {
+                    query = query.Where(p => p.StatusPedido == statusFiltro.Value);
+                }
+
+                var pedidos = await query.ToListAsync();
+
+                if (!pedidos.Any())
+                {
+                    response.Mensagem = "Nenhum pedido encontrado com os critérios informados.";
+                    return response;
+                }
+
+                var pedidosResponse = pedidos.Select(p => new PedidoResponse
+                {
+                    Id = p.Id,
+                    ValorTotal = p.ValorTotal,
+                    DataPedido = p.DataPedido,
+                    StatusPedido = p.StatusPedido,
+                    Cliente = new ClientePedidoResponse
+                    {
+                        Nome = p.Cliente.Nome,
+                        Telefone = p.Cliente.Telefone,
+                        Endereco = p.Cliente.EnderecoCliente != null
+                            ? new EnderecoClienteResponse
+                            {
+                                Logradouro = p.Cliente.EnderecoCliente.Logradouro,
+                                Complemento = p.Cliente.EnderecoCliente.Complemento,
+                                Cep = p.Cliente.EnderecoCliente.Cep
+                            }
+                            : null
+                    },
+                    Produtos = p.PedidoProdutos.Select(pp => new PedidoProdutoResponse
+                    {
+                        ProdutoId = pp.ProdutoId,
+                        Quantidade = pp.Quantidade,
+                        Observacao = pp.Observacao,
+                        ValorUnitario = pp.ValorUnitario,
+                        NomeProduto = pp.Produto != null ? pp.Produto.Nome : null
+                    }).ToList()
+                }).ToList();
+
+                response.Status = true;
+                response.Dados = pedidosResponse;
+                response.Mensagem = "Pedidos listados com sucesso.";
+
+                return response;
+            }
+            catch (Exception ex)
+            {
+                response.Mensagem = ex.Message;
+                response.Status = false;
+                return response;
+            }
+        }
     }
 }
