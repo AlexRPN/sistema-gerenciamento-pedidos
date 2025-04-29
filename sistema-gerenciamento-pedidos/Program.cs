@@ -6,6 +6,8 @@ using sistema_gerenciamento_pedidos.Services.Cliente;
 using sistema_gerenciamento_pedidos.Services.Cliente.Interfaces;
 using sistema_gerenciamento_pedidos.Services.Funcionarios;
 using sistema_gerenciamento_pedidos.Services.Funcionarios.Interfaces;
+using sistema_gerenciamento_pedidos.Services.Pedidos;
+using sistema_gerenciamento_pedidos.Services.Pedidos.Interfaces;
 using sistema_gerenciamento_pedidos.Services.Produtos;
 using sistema_gerenciamento_pedidos.Services.Produtos.Interfaces;
 using sistema_gerenciamento_pedidos.Services.Senha;
@@ -34,7 +36,7 @@ builder.Services.AddScoped<ISenhaService, SenhaService>();
 builder.Services.AddScoped<IFuncionarioService, FuncionarioService>();
 builder.Services.AddScoped<IProdutoService, ProdutoService>();
 builder.Services.AddScoped<IClienteService, ClienteService>();
-
+builder.Services.AddScoped<IPedidoService, PedidoService>();
 
 builder.Services.AddDbContext<AppDbContext>(options =>
 {

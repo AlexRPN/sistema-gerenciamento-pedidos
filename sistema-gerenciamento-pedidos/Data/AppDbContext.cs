@@ -23,6 +23,7 @@ namespace sistema_gerenciamento_pedidos.Data
         public DbSet<EnderecoClienteModel> EnderecoCliente { get; set; }
         public DbSet<PedidoModel> Pedido { get; set; }
         public DbSet<ProdutoModel> Produto { get; set; }
+        public DbSet<PedidoProdutoModel> PedidoProduto { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             // Configuração da tabela PedidoProduto

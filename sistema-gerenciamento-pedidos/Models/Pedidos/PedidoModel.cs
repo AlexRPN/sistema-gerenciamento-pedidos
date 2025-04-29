@@ -7,7 +7,7 @@ namespace sistema_gerenciamento_pedidos.Models.Pedidos
     public class PedidoModel
     {
         public int Id { get; set; }
-        public decimal ValorUnitario { get; set; }
+        public decimal ValorTotal { get; set; }
         public DateTime DataPedido { get; set; }
         public StatusPedidoEnum StatusPedido { get; set; } = StatusPedidoEnum.EmPreparacao;
 
