@@ -48,7 +48,7 @@ namespace sistema_gerenciamento_pedidos.Controllers.Produtos
         /// <param name="foto"></param>
         /// <returns></returns>
         [HttpPut]
-        public async Task<ActionResult<ProdutoResponse>> Editar([FromBody] ProdutoEdicaoDto produtoEdicaoDto)
+        public async Task<ActionResult<ProdutoResponse>> Editar(ProdutoEdicaoDto produtoEdicaoDto)
         {
             var produto = await _produtoService.Editar(produtoEdicaoDto);
             return Ok(produto);

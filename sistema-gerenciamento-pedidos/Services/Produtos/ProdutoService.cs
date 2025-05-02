@@ -62,7 +62,7 @@ namespace sistema_gerenciamento_pedidos.Services.Produtos
 
             try
             {
-                var produtoBanco = await _appDbContext.Produto.FirstOrDefaultAsync(x => x.Descricao == produtoCriacaoDto.Descricao && x.Imagem == produtoCriacaoDto.Imagem);
+                var produtoBanco = await _appDbContext.Produto.FirstOrDefaultAsync(x => x.Descricao == produtoCriacaoDto.Descricao && x.Tamanho == produtoCriacaoDto.Tamanho && x.Nome == produtoCriacaoDto.Nome);
 
                 if (produtoBanco != null)
                 {
@@ -190,6 +190,29 @@ namespace sistema_gerenciamento_pedidos.Services.Produtos
 
                 return response;
             }
+        }
+
+        private string GeraCaminhoArquivo(IFormFile foto)
+        {
+            if (foto == null)
+                return null;
+
+            var codigoUnico = Guid.NewGuid().ToString();
+            var nomeCaminhoDaImagem = foto.FileName.Replace(" ", "").ToLower() + codigoUnico + ".png";
+
+            string caminhoParaSalvarImagens = _caminhoServidor + "\\Imagem\\";
+
+            if (!Directory.Exists(caminhoParaSalvarImagens))
+            {
+                Directory.CreateDirectory(caminhoParaSalvarImagens);
+            }
+
+            using (var stream = System.IO.File.Create(caminhoParaSalvarImagens + nomeCaminhoDaImagem))
+            {
+                foto.CopyToAsync(stream).Wait();
+            }
+
+            return nomeCaminhoDaImagem;
         }
     }
 }
