@@ -204,7 +204,6 @@ namespace sistema_gerenciamento_pedidos.Services.Pedidos
                         Quantidade = pp.Quantidade,
                         Observacao = pp.Observacao,
                         ValorUnitario = pp.ValorUnitario,
-                        // Agora o nome do produto será preenchido corretamente
                         NomeProduto = pp.Produto != null ? pp.Produto.Nome : null
                     }).ToList(),
                 };
