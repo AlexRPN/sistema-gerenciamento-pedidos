@@ -176,34 +176,49 @@ namespace sistema_gerenciamento_pedidos.Services.Cliente
             }
         }
 
-        public async Task<ResponseModel<List<ClienteResponse>>> Listar()
+        public async Task<ResponseModel<List<ClienteResponse>>> Listar(int? id, string? nome, string? telefone)
         {
             ResponseModel<List<ClienteResponse>> response = new ResponseModel<List<ClienteResponse>>();
 
             try
             {
-                var clientes = _appDbContext.Cliente.Include(e => e.EnderecoCliente).Include(e => e.Empresa).ToList();
+                var query = _appDbContext.Cliente
+                    .Include(e => e.EnderecoCliente)
+                    .Include(e => e.Empresa)
+                    .AsQueryable();
 
-                if (clientes.Count() == 0)
+                if (id.HasValue && id.Value > 0)
+                    query = query.Where(c => c.Id == id.Value);
+
+                if (!string.IsNullOrWhiteSpace(nome))
+                    query = query.Where(c => c.Nome.Contains(nome));
+
+                if (!string.IsNullOrWhiteSpace(telefone))
+                    query = query.Where(c => c.Telefone.Contains(telefone));
+
+                var clientes = await query.ToListAsync();
+
+                if (!clientes.Any())
                 {
-                    response.Mensagem = "Nenhum cliente cadastrado no sistema!";
+                    response.Mensagem = "Nenhum cliente encontrado com os dados informados.";
                     return response;
                 }
 
                 var clientesResponse = _mapper.Map<List<ClienteResponse>>(clientes);
 
                 response.Dados = clientesResponse;
-                response.Mensagem = "Clientes localizados com sucesso!";
+                response.Mensagem = "Cliente localizado com sucesso!";
+                response.Status = true;
 
                 return response;
             }
             catch (Exception ex)
             {
-                response.Mensagem = ex.Message;
+                response.Mensagem = $"Erro ao listar clientes: {ex.Message}";
                 response.Status = false;
-
                 return response;
             }
         }
+
     }
 }

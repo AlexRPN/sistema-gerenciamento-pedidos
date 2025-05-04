@@ -3,6 +3,7 @@ using Hangfire;
 using Microsoft.EntityFrameworkCore;
 using sistema_gerenciamento_pedidos.Data;
 using sistema_gerenciamento_pedidos.Dto.Cliente.Response;
+using sistema_gerenciamento_pedidos.Dto.Empresa.Response;
 using sistema_gerenciamento_pedidos.Dto.EnderecoCliente.Response;
 using sistema_gerenciamento_pedidos.Dto.Model.Response;
 using sistema_gerenciamento_pedidos.Dto.Pedido.Request;
@@ -38,6 +39,7 @@ namespace sistema_gerenciamento_pedidos.Services.Pedidos
                         .ThenInclude(pp => pp.Produto)
                     .Include(p => p.Cliente)
                         .ThenInclude(c => c.EnderecoCliente)
+                        .Include(p => p.Cliente.Empresa)
                     .FirstOrDefaultAsync(p => p.Id == id);
 
                 if (pedido == null)
@@ -66,6 +68,16 @@ namespace sistema_gerenciamento_pedidos.Services.Pedidos
                             }
                             : null
                     },
+                    Empresa = pedido.Cliente.Empresa != null
+                    ? new EmpresaResponse
+                    {
+                        Id = pedido.Cliente.Empresa.Id,
+                        RazaoSocial = pedido.Cliente.Empresa.RazaoSocial,
+                        Cnpj = pedido.Cliente.Empresa.Cnpj,
+                        Telefone = pedido.Cliente.Empresa.Telefone,
+                        Situacao = pedido.Cliente.Empresa.Situacao.ToString()
+                    }
+                    : null,
                     Produtos = pedido.PedidoProdutos.Select(pp => new PedidoProdutoResponse
                     {
                         ProdutoId = pp.ProdutoId,

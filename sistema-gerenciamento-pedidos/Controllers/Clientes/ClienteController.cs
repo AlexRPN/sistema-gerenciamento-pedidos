@@ -36,9 +36,9 @@ namespace sistema_gerenciamento_pedidos.Controllers.Clientes
         /// </summary>
         /// <returns></returns>
         [HttpGet]
-        public async Task<ActionResult<List<ClienteResponse>>> Listar()
+        public async Task<ActionResult<List<ClienteResponse>>> Listar(int? id, string? nome, string? telefone)
         {
-            var clientes = await _clienteService.Listar();
+            var clientes = await _clienteService.Listar(id, nome, telefone);
             return Ok(clientes);
         }
 

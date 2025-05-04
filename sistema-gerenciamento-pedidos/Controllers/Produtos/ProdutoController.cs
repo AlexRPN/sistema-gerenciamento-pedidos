@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using sistema_gerenciamento_pedidos.Dto.Produto.Request;
 using sistema_gerenciamento_pedidos.Dto.Produto.Response;
+using sistema_gerenciamento_pedidos.Enums;
 using sistema_gerenciamento_pedidos.Services.Produtos.Interfaces;
 
 namespace sistema_gerenciamento_pedidos.Controllers.Produtos
@@ -35,9 +36,9 @@ namespace sistema_gerenciamento_pedidos.Controllers.Produtos
         /// </summary>
         /// <returns></returns>
         [HttpGet]
-        public async Task<ActionResult<List<ProdutoResponse>>> Listar()
+        public async Task<ActionResult<List<ProdutoResponse>>> Listar(CategoriaEnum? categoria)
         {
-            var produtos = await _produtoService.Listar();
+            var produtos = await _produtoService.Listar(categoria);
             return Ok(produtos);
         }
 

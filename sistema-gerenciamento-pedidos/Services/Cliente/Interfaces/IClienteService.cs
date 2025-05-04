@@ -8,7 +8,7 @@ namespace sistema_gerenciamento_pedidos.Services.Cliente.Interfaces
     public interface IClienteService
     {
         Task<ResponseModel<ClienteResponse>> Cadastrar(ClienteCriacaoDto clienteCriacaoDto);
-        Task<ResponseModel<List<ClienteResponse>>> Listar();
+        Task<ResponseModel<List<ClienteResponse>>> Listar(int? id, string? nome, string? telefone);
         Task<ResponseModel<ClienteModel>> Editar(ClienteEdicaoDto clienteEdicaoDto);
         Task<ResponseModel<ClienteResponse>> BuscarClientePorId(int id);
         Task<ResponseModel<ClienteModel>> Inativar(int id);

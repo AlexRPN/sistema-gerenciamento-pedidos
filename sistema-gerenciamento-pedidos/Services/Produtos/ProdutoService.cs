@@ -162,17 +162,24 @@ namespace sistema_gerenciamento_pedidos.Services.Produtos
             }
         }
 
-        public async Task<ResponseModel<List<ProdutoResponse>>> Listar()
+        public async Task<ResponseModel<List<ProdutoResponse>>> Listar(CategoriaEnum? categoria)
         {
             ResponseModel<List<ProdutoResponse>> response = new ResponseModel<List<ProdutoResponse>>();
 
             try
             {
-                var produtos = _appDbContext.Produto.ToList();
+                var produtosQuery = _appDbContext.Produto.AsQueryable();
 
-                if (produtos.Count() == 0)
+                if (categoria.HasValue)
                 {
-                    response.Mensagem = "Nenhum produto cadastrado!";
+                    produtosQuery = produtosQuery.Where(p => p.Categoria == categoria.Value);
+                }
+
+                var produtos = produtosQuery.ToList();
+
+                if (!produtos.Any())
+                {
+                    response.Mensagem = "Nenhum produto encontrado para a categoria especificada.";
                     return response;
                 }
 
