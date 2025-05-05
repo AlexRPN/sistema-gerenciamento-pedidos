@@ -10,6 +10,7 @@ namespace sistema_gerenciamento_pedidos.Models.Pedidos
         public int Id { get; set; }
         public decimal ValorTotal { get; set; }
         public DateTime DataPedido { get; set; }
+        public TipoPagamentoEnum TipoPagamento { get; set; }
         public StatusPedidoEnum StatusPedido { get; set; } = StatusPedidoEnum.EmPreparacao;
 
         //Relacionamento entre as tabelas CLIENTE x PEDIDO
