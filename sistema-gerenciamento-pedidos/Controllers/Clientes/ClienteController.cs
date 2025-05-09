@@ -9,7 +9,7 @@ namespace sistema_gerenciamento_pedidos.Controllers.Clientes
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize]
+    //[Authorize]
     public class ClienteController : ControllerBase
     {
         private readonly IClienteService _clienteService;

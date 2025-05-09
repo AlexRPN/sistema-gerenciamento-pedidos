@@ -8,7 +8,7 @@ namespace sistema_gerenciamento_pedidos.Controllers.Funcionarios
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize]
+    //[Authorize]
     public class FuncionarioController : ControllerBase
     {
         private readonly IFuncionarioService _funcionarioService;

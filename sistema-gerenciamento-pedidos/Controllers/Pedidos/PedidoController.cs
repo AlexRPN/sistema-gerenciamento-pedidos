@@ -10,7 +10,7 @@ namespace sistema_gerenciamento_pedidos.Controllers.Pedidos
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize]
+    //[Authorize]
     public class PedidoController : ControllerBase
     {
         private readonly IPedidoService _pedidoService;
