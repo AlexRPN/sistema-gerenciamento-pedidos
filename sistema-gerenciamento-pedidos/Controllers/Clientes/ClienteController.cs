@@ -48,9 +48,9 @@ namespace sistema_gerenciamento_pedidos.Controllers.Clientes
         /// <param name="clienteEdicaoDto"></param>
         /// <returns></returns>
         [HttpPut]
-        public async Task<ActionResult> Editar(ClienteEdicaoDto clienteEdicaoDto)
+        public async Task<ActionResult<ResponseModel<ClienteResponse>>> Editar(ClienteEdicaoDto clienteEdicaoDto)
         {
-            var cliente = await _clienteService.Editar(clienteEdicaoDto);
+            var cliente = await _clienteService.Editar(clienteEdicaoDto, clienteEdicaoDto.EnderecoCliente);
             return Ok(cliente);
         }
 

@@ -1,4 +1,5 @@
 ﻿using sistema_gerenciamento_pedidos.Models.Clientes;
+using System.Text.Json.Serialization;
 
 namespace sistema_gerenciamento_pedidos.Models.EnderecoCliente
 {
@@ -11,6 +12,7 @@ namespace sistema_gerenciamento_pedidos.Models.EnderecoCliente
 
         //Relacionamento entre as tabelas CLIENTE x ENDERECOCLIENTE
         public int ClienteId { get; set; }
+        [JsonIgnore]
         public ClienteModel Cliente { get; set; }
     }
 }

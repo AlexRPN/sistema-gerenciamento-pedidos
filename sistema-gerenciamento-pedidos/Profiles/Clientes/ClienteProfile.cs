@@ -13,6 +13,13 @@ namespace sistema_gerenciamento_pedidos.Profiles.Cliente
             CreateMap<ClienteModel, ClienteResponse>()
             .ForMember(dest => dest.Endereco, opt => opt.MapFrom(src => src.EnderecoCliente))
             .ForMember(dest => dest.Empresa, opt => opt.MapFrom(src => src.Empresa));
+
+            CreateMap<ClienteEdicaoDto, ClienteModel>()
+                .ForMember(dest => dest.EnderecoCliente, opt => opt.MapFrom(src => src.EnderecoCliente));
+
+            CreateMap<ClienteModel, ClienteEdicaoDto>()
+                .ForMember(dest => dest.EnderecoCliente, opt => opt.MapFrom(src => src.EnderecoCliente));
+
         }
     }
 }

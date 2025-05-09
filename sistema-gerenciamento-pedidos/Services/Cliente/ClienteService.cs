@@ -3,11 +3,13 @@ using Microsoft.EntityFrameworkCore;
 using sistema_gerenciamento_pedidos.Data;
 using sistema_gerenciamento_pedidos.Dto.Cliente.Request;
 using sistema_gerenciamento_pedidos.Dto.Cliente.Response;
+using sistema_gerenciamento_pedidos.Dto.EnderecoCliente.Request;
 using sistema_gerenciamento_pedidos.Dto.Model.Response;
 using sistema_gerenciamento_pedidos.Enums;
 using sistema_gerenciamento_pedidos.Models.Clientes;
 using sistema_gerenciamento_pedidos.Models.EnderecoCliente;
 using sistema_gerenciamento_pedidos.Services.Cliente.Interfaces;
+using sistema_gerenciamento_pedidos.Services.EnderecoCliente.Interface;
 
 namespace sistema_gerenciamento_pedidos.Services.Cliente
 {
@@ -15,12 +17,15 @@ namespace sistema_gerenciamento_pedidos.Services.Cliente
     {
         private readonly AppDbContext _appDbContext;
         private readonly IMapper _mapper;
+        private readonly IEnderecoClienteService _enderecoClienteService;
 
         public ClienteService(AppDbContext appDbContext,
-                              IMapper mapper)
+                              IMapper mapper,
+                              IEnderecoClienteService enderecoClienteService)
         {
             _appDbContext = appDbContext;
             _mapper = mapper;
+            _enderecoClienteService = enderecoClienteService;
         }
 
         public async Task<ResponseModel<ClienteResponse>> BuscarClientePorId(int id)
@@ -103,13 +108,15 @@ namespace sistema_gerenciamento_pedidos.Services.Cliente
             }
         }
 
-        public async Task<ResponseModel<ClienteModel>> Editar(ClienteEdicaoDto clienteEdicaoDto)
+        public async Task<ResponseModel<ClienteModel>> Editar(ClienteEdicaoDto clienteEdicaoDto, EnderecoClienteEdicaoDto? enderecoClienteEdicaoDto)
         {
             ResponseModel<ClienteModel> response = new ResponseModel<ClienteModel>();
 
             try
             {
-                var cliente = await _appDbContext.Cliente.FindAsync(clienteEdicaoDto.Id);
+                var cliente = await _appDbContext.Cliente
+                                                 .Include(c => c.EnderecoCliente)
+                                                 .FirstOrDefaultAsync(c => c.Id == clienteEdicaoDto.Id);
 
                 if (cliente == null)
                 {
@@ -120,6 +127,21 @@ namespace sistema_gerenciamento_pedidos.Services.Cliente
                 cliente.Nome = clienteEdicaoDto.Nome;
                 cliente.Telefone = clienteEdicaoDto.Telefone;
                 cliente.DataAlteracao = DateTime.Now;
+
+                if (enderecoClienteEdicaoDto != null)
+                {
+                    var enderecoClienteResponse = await _enderecoClienteService.EditarEndereco(clienteEdicaoDto.Id, enderecoClienteEdicaoDto);
+
+                    if (!enderecoClienteResponse.Status)
+                    {
+                        response.Mensagem = $"Erro ao editar endereço: {enderecoClienteResponse.Mensagem}";
+                        response.Status = false;
+                        return response;
+                    }
+
+                    var enderecoClienteBanco = _mapper.Map<EnderecoClienteModel>(enderecoClienteResponse.Dados);
+                    cliente.EnderecoCliente = enderecoClienteBanco;
+                }
 
                 _appDbContext.Update(cliente);
                 await _appDbContext.SaveChangesAsync();
@@ -133,7 +155,6 @@ namespace sistema_gerenciamento_pedidos.Services.Cliente
             {
                 response.Mensagem = ex.Message;
                 response.Status = false;
-
                 return response;
             }
         }

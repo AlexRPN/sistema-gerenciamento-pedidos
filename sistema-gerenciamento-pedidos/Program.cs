@@ -5,6 +5,8 @@ using Microsoft.IdentityModel.Tokens;
 using sistema_gerenciamento_pedidos.Data;
 using sistema_gerenciamento_pedidos.Services.Cliente;
 using sistema_gerenciamento_pedidos.Services.Cliente.Interfaces;
+using sistema_gerenciamento_pedidos.Services.EnderecoCliente;
+using sistema_gerenciamento_pedidos.Services.EnderecoCliente.Interface;
 using sistema_gerenciamento_pedidos.Services.Funcionarios;
 using sistema_gerenciamento_pedidos.Services.Funcionarios.Interfaces;
 using sistema_gerenciamento_pedidos.Services.Pedidos;
@@ -38,6 +40,8 @@ builder.Services.AddScoped<IFuncionarioService, FuncionarioService>();
 builder.Services.AddScoped<IProdutoService, ProdutoService>();
 builder.Services.AddScoped<IClienteService, ClienteService>();
 builder.Services.AddScoped<IPedidoService, PedidoService>();
+builder.Services.AddScoped<IEnderecoClienteService, EnderecoClienteService>();
+
 
 builder.Services.AddDbContext<AppDbContext>(options =>
 {

@@ -13,6 +13,6 @@ namespace sistema_gerenciamento_pedidos.Dto.Cliente.Response
         public DateTime DataCadastro { get; set; }
 
         public EnderecoClienteResponse Endereco { get; set; }
-        public EmpresaResponse Empresa { get; set; }
+        public EmpresaResponse? Empresa { get; set; }
     }
 }

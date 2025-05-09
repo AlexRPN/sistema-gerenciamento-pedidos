@@ -1,6 +1,5 @@
 ﻿using sistema_gerenciamento_pedidos.Enums;
 using sistema_gerenciamento_pedidos.Models.Clientes;
-using sistema_gerenciamento_pedidos.Models.Empresas;
 using sistema_gerenciamento_pedidos.Models.PedidoProduto;
 
 namespace sistema_gerenciamento_pedidos.Models.Pedidos
