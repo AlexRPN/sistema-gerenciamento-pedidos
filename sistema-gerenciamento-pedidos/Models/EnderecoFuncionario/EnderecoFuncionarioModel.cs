@@ -1,4 +1,5 @@
 ﻿using sistema_gerenciamento_pedidos.Models.Funcionarios;
+using System.Text.Json.Serialization;
 
 namespace sistema_gerenciamento_pedidos.Models.EnderecoFuncionario
 {
@@ -11,6 +12,7 @@ namespace sistema_gerenciamento_pedidos.Models.EnderecoFuncionario
 
         //Relacionamento de tabelas FUNCIONARIO x ENDERECOFUNCIONARIO
         public int FuncionarioId { get; set; }
+        [JsonIgnore]
         public FuncionarioModel Funcionario { get; set; }
     }
 }

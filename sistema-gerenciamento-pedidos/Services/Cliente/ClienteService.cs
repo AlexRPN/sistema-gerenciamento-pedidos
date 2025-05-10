@@ -229,7 +229,6 @@ namespace sistema_gerenciamento_pedidos.Services.Cliente
 
                 response.Dados = clientesResponse;
                 response.Mensagem = "Cliente localizado com sucesso!";
-                response.Status = true;
 
                 return response;
             }

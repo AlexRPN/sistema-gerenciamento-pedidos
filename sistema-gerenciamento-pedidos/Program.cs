@@ -7,6 +7,8 @@ using sistema_gerenciamento_pedidos.Services.Cliente;
 using sistema_gerenciamento_pedidos.Services.Cliente.Interfaces;
 using sistema_gerenciamento_pedidos.Services.EnderecoCliente;
 using sistema_gerenciamento_pedidos.Services.EnderecoCliente.Interface;
+using sistema_gerenciamento_pedidos.Services.EnderecoFuncionario;
+using sistema_gerenciamento_pedidos.Services.EnderecoFuncionario.Interfaces;
 using sistema_gerenciamento_pedidos.Services.Funcionarios;
 using sistema_gerenciamento_pedidos.Services.Funcionarios.Interfaces;
 using sistema_gerenciamento_pedidos.Services.Pedidos;
@@ -41,6 +43,7 @@ builder.Services.AddScoped<IProdutoService, ProdutoService>();
 builder.Services.AddScoped<IClienteService, ClienteService>();
 builder.Services.AddScoped<IPedidoService, PedidoService>();
 builder.Services.AddScoped<IEnderecoClienteService, EnderecoClienteService>();
+builder.Services.AddScoped<IEnderecoFuncionarioService, EnderecoFuncionarioService>();
 
 
 builder.Services.AddDbContext<AppDbContext>(options =>

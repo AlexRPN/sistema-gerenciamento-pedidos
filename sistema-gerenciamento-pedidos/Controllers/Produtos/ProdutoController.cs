@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using sistema_gerenciamento_pedidos.Dto.Produto.Request;
 using sistema_gerenciamento_pedidos.Dto.Produto.Response;
 using sistema_gerenciamento_pedidos.Enums;
