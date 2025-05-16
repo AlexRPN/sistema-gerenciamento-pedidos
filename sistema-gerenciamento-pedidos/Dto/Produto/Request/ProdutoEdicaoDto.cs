@@ -11,7 +11,7 @@ namespace sistema_gerenciamento_pedidos.Dto.Produto.Request
         public CategoriaEnum Categoria { get; set; }
         public TamanhoEnum Tamanho { get; set; }
         public SituacaoEnum Situacao { get; set; }
-        public string? Imagem { get; set; } = string.Empty;
+        public IFormFile? Imagem { get; set; }
         public int EmpresaId { get; set; }
     }
 }

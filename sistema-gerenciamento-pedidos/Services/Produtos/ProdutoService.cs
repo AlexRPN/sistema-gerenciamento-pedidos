@@ -14,15 +14,12 @@ namespace sistema_gerenciamento_pedidos.Services.Produtos
     {
         private readonly AppDbContext _appDbContext;
         private readonly IMapper _mapper;
-        private string _caminhoServidor;
 
         public ProdutoService(AppDbContext appDbContext,
-                              IMapper mapper,
-                              IWebHostEnvironment sistema)
+                              IMapper mapper)
         {
             _appDbContext = appDbContext;
             _mapper = mapper;
-            _caminhoServidor = sistema.WebRootPath;
         }
 
         public async Task<ResponseModel<ProdutoResponse>> BuscarProdutoPorId(int id)
@@ -57,12 +54,14 @@ namespace sistema_gerenciamento_pedidos.Services.Produtos
 
         public async Task<ResponseModel<ProdutoResponse>> Cadastrar(ProdutoCriacaoDto produtoCriacaoDto)
         {
-
             ResponseModel<ProdutoResponse> response = new ResponseModel<ProdutoResponse>();
 
             try
             {
-                var produtoBanco = await _appDbContext.Produto.FirstOrDefaultAsync(x => x.Descricao == produtoCriacaoDto.Descricao && x.Tamanho == produtoCriacaoDto.Tamanho && x.Nome == produtoCriacaoDto.Nome);
+                var produtoBanco = await _appDbContext.Produto.FirstOrDefaultAsync(
+                    x => x.Descricao == produtoCriacaoDto.Descricao &&
+                         x.Tamanho == produtoCriacaoDto.Tamanho &&
+                         x.Nome == produtoCriacaoDto.Nome);
 
                 if (produtoBanco != null)
                 {
@@ -71,6 +70,25 @@ namespace sistema_gerenciamento_pedidos.Services.Produtos
                 }
 
                 ProdutoModel produto = _mapper.Map<ProdutoModel>(produtoCriacaoDto);
+
+                // Salvar imagem no servidor
+                if (produtoCriacaoDto.Imagem != null && produtoCriacaoDto.Imagem.Length > 0)
+                {
+                    var nomeArquivo = $"{Guid.NewGuid()}{Path.GetExtension(produtoCriacaoDto.Imagem.FileName)}";
+                    var caminhoPasta = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "imagens");
+
+                    if (!Directory.Exists(caminhoPasta))
+                        Directory.CreateDirectory(caminhoPasta);
+
+                    var caminhoCompleto = Path.Combine(caminhoPasta, nomeArquivo);
+
+                    using (var stream = new FileStream(caminhoCompleto, FileMode.Create))
+                    {
+                        await produtoCriacaoDto.Imagem.CopyToAsync(stream);
+                    }
+
+                    produto.Imagem = $"imagens/{nomeArquivo}";
+                }
 
                 produto.Empresa = await _appDbContext.Empresa.FirstOrDefaultAsync(e => e.Id == produtoCriacaoDto.EmpresaId);
                 produto.DataCadastro = DateTime.Now;
@@ -94,23 +112,50 @@ namespace sistema_gerenciamento_pedidos.Services.Produtos
             }
         }
 
-        public async Task<ResponseModel<ProdutoModel>> Editar(ProdutoEdicaoDto produtoEdicaoDto)
+        public async Task<ResponseModel<ProdutoResponse>> Editar(ProdutoEdicaoDto produtoEdicaoDto, IFormFile? imagem)
         {
-            ResponseModel<ProdutoModel> response = new ResponseModel<ProdutoModel>();
+            ResponseModel<ProdutoResponse> response = new ResponseModel<ProdutoResponse>();
 
             try
             {
-                var produto = await _appDbContext.Produto.AsNoTracking().FirstOrDefaultAsync(x => x.Id == produtoEdicaoDto.Id);
+                var produtoBanco = await _appDbContext.Produto.FirstOrDefaultAsync(x => x.Id == produtoEdicaoDto.Id);
 
-                var produtoEdicao = _mapper.Map<ProdutoModel>(produtoEdicaoDto);
+                if (produtoBanco == null)
+                {
+                    response.Mensagem = "Produto não encontrado.";
+                    response.Status = false;
+                    return response;
+                }
 
-                produtoEdicao.DataAlteracao = DateTime.Now;
+                _mapper.Map(produtoEdicaoDto, produtoBanco);
+                produtoBanco.DataAlteracao = DateTime.Now;
 
-                _appDbContext.Update(produtoEdicao);
+                // Se houver nova imagem, salvar e atualizar o nome
+                if (imagem != null && imagem.Length > 0)
+                {
+                    var pastaDestino = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "imagens");
+
+                    if (!Directory.Exists(pastaDestino))
+                        Directory.CreateDirectory(pastaDestino);
+
+                    var nomeImagem = $"{Guid.NewGuid()}{Path.GetExtension(imagem.FileName)}";
+                    var caminhoCompleto = Path.Combine(pastaDestino, nomeImagem);
+
+                    using (var stream = new FileStream(caminhoCompleto, FileMode.Create))
+                    {
+                        await imagem.CopyToAsync(stream);
+                    }
+
+                    produtoBanco.Imagem = $"imagens/{nomeImagem}";
+                }
+
+                _appDbContext.Produto.Update(produtoBanco);
                 await _appDbContext.SaveChangesAsync();
 
+                ProdutoResponse produtoResponse = _mapper.Map<ProdutoResponse>(produtoBanco);
+
                 response.Mensagem = "Dados alterados com sucesso!";
-                response.Dados = produtoEdicao;
+                response.Dados = produtoResponse;
 
                 return response;
             }
@@ -199,27 +244,5 @@ namespace sistema_gerenciamento_pedidos.Services.Produtos
             }
         }
 
-        private string GeraCaminhoArquivo(IFormFile foto)
-        {
-            if (foto == null)
-                return null;
-
-            var codigoUnico = Guid.NewGuid().ToString();
-            var nomeCaminhoDaImagem = foto.FileName.Replace(" ", "").ToLower() + codigoUnico + ".png";
-
-            string caminhoParaSalvarImagens = _caminhoServidor + "\\Imagem\\";
-
-            if (!Directory.Exists(caminhoParaSalvarImagens))
-            {
-                Directory.CreateDirectory(caminhoParaSalvarImagens);
-            }
-
-            using (var stream = System.IO.File.Create(caminhoParaSalvarImagens + nomeCaminhoDaImagem))
-            {
-                foto.CopyToAsync(stream).Wait();
-            }
-
-            return nomeCaminhoDaImagem;
-        }
     }
 }

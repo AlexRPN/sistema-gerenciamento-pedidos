@@ -10,7 +10,7 @@ namespace sistema_gerenciamento_pedidos.Services.Produtos.Interfaces
     {
         Task<ResponseModel<ProdutoResponse>> Cadastrar(ProdutoCriacaoDto produtoCriacaoDto);
         Task<ResponseModel<List<ProdutoResponse>>> Listar(CategoriaEnum? categoria);
-        Task<ResponseModel<ProdutoModel>> Editar(ProdutoEdicaoDto produtoEdicaoDto);
+        Task<ResponseModel<ProdutoResponse>> Editar(ProdutoEdicaoDto produtoEdicaoDto, IFormFile? imagem);
         Task<ResponseModel<ProdutoResponse>> BuscarProdutoPorId(int id);
         Task<ResponseModel<ProdutoModel>> Inativar(int id);
     }

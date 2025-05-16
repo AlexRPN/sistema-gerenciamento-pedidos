@@ -15,7 +15,7 @@ namespace sistema_gerenciamento_pedidos.Dto.Produto.Request
         public CategoriaEnum Categoria { get; set; }
         [Required(ErrorMessage = "Informe o tamanho do produto")]
         public TamanhoEnum Tamanho { get; set; }
-        public string? Imagem { get; set; } = string.Empty;
+        public IFormFile? Imagem { get; set; }
         [Required(ErrorMessage = "Informe o Id da empresa a qual o produto será vinculado")]
         public int EmpresaId { get; set; }
     }

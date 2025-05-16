@@ -107,6 +107,8 @@ if (app.Environment.IsDevelopment())
 
 app.UseCors("sistema-gerenciamento-pedidos-site");
 
+app.UseStaticFiles();
+
 app.UseHttpsRedirection();
 
 app.UseAuthentication();

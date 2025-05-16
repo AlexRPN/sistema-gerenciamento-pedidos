@@ -24,7 +24,8 @@ namespace sistema_gerenciamento_pedidos.Controllers.Produtos
         /// <param name="produtoCriacaoDto"></param>
         /// <returns></returns>
         [HttpPost]
-        public async Task<ActionResult<ProdutoResponse>> Cadastrar(ProdutoCriacaoDto produtoCriacaoDto)
+        [Consumes("multipart/form-data")]
+        public async Task<ActionResult<ProdutoResponse>> Cadastrar([FromForm] ProdutoCriacaoDto produtoCriacaoDto)
         {
             var produto = await _produtoService.Cadastrar(produtoCriacaoDto);
             return Ok(produto);
@@ -45,12 +46,13 @@ namespace sistema_gerenciamento_pedidos.Controllers.Produtos
         /// Edita o produto
         /// </summary>
         /// <param name="produtoEdicaoDto"></param>
-        /// <param name="foto"></param>
+        /// <param name="imagem"></param>
         /// <returns></returns>
         [HttpPut]
-        public async Task<ActionResult<ProdutoResponse>> Editar(ProdutoEdicaoDto produtoEdicaoDto)
+        [Consumes("multipart/form-data")]
+        public async Task<ActionResult<ProdutoResponse>> Editar([FromForm] ProdutoEdicaoDto produtoEdicaoDto, IFormFile? imagem)
         {
-            var produto = await _produtoService.Editar(produtoEdicaoDto);
+            var produto = await _produtoService.Editar(produtoEdicaoDto, imagem);
             return Ok(produto);
         }
 
