@@ -85,12 +85,13 @@ namespace sistema_gerenciamento_pedidos.Controllers.Pedidos
         /// <param name="id">Id do pedido</param>
         /// <param name="novoStatus">Novo status</param>
         /// <returns></returns>
-        [HttpPut("{id}/status")]
-        public async Task<ActionResult<ResponseModel<PedidoResponse>>> EditarStatusPedido(int id, [FromQuery] StatusPedidoEnum statusPedido)
+        [HttpPut("status")]
+        public async Task<ActionResult<ResponseModel<PedidoResponse>>> EditarStatusPedido([FromQuery] PedidoStatusDto dto)
         {
-            var resultado = await _pedidoService.EditarStatusPedido(id, statusPedido);
+            var resultado = await _pedidoService.EditarStatusPedido(dto);
             return Ok(resultado);
         }
+
 
     }
 }

@@ -1,4 +1,5 @@
 ﻿using sistema_gerenciamento_pedidos.Dto.PedidoProduto.Request;
+using sistema_gerenciamento_pedidos.Enums;
 
 namespace sistema_gerenciamento_pedidos.Dto.Pedido.Request
 {

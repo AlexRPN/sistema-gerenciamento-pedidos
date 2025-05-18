@@ -12,6 +12,7 @@ namespace sistema_gerenciamento_pedidos.Services.Pedidos.Interfaces
         Task<ResponseModel<PedidoResponse>> BuscarPedidoPorId(int id);
         Task<ResponseModel<PedidoResponse>> CancelarPedido(int id);
         Task<ResponseModel<PedidoResponse>> EditarPedido(PedidoEdicaoDto pedidoEdicaoDto);
-        Task<ResponseModel<PedidoResponse>> EditarStatusPedido(int id, StatusPedidoEnum statusPedido);
+        Task<ResponseModel<PedidoResponse>> EditarStatusPedido(PedidoStatusDto dto);
+        //Task<ResponseModel<PedidoResponse>> EditarStatusPedido(int id, StatusPedidoEnum statusPedido, string motivoCancelamento);
     }
 }

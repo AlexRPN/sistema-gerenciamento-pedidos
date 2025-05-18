@@ -55,6 +55,7 @@ namespace sistema_gerenciamento_pedidos.Services.Pedidos
                     ValorTotal = pedido.ValorTotal,
                     DataPedido = pedido.DataPedido,
                     StatusPedido = pedido.StatusPedido,
+                    MotivoCancelamento = pedido.MotivoCancelamento,
                     Cliente = new ClientePedidoResponse
                     {
                         Nome = pedido.Cliente.Nome,
@@ -297,7 +298,7 @@ namespace sistema_gerenciamento_pedidos.Services.Pedidos
             }
         }
 
-        public async Task<ResponseModel<PedidoResponse>> EditarStatusPedido(int id, StatusPedidoEnum statusPedido)
+        public async Task<ResponseModel<PedidoResponse>> EditarStatusPedido(PedidoStatusDto dto)
         {
             var response = new ResponseModel<PedidoResponse>();
 
@@ -308,7 +309,7 @@ namespace sistema_gerenciamento_pedidos.Services.Pedidos
                         .ThenInclude(pp => pp.Produto)
                     .Include(p => p.Cliente)
                         .ThenInclude(c => c.EnderecoCliente)
-                    .FirstOrDefaultAsync(p => p.Id == id);
+                    .FirstOrDefaultAsync(p => p.Id == dto.Id);
 
                 if (pedido == null)
                 {
@@ -318,14 +319,18 @@ namespace sistema_gerenciamento_pedidos.Services.Pedidos
                 }
 
                 // Só permite cancelar se estiver em preparação
-                if (statusPedido == StatusPedidoEnum.Cancelado && pedido.StatusPedido != StatusPedidoEnum.EmPreparacao)
+                if (dto.StatusPedido == StatusPedidoEnum.Cancelado && pedido.StatusPedido != StatusPedidoEnum.EmPreparacao)
                 {
                     response.Mensagem = "Só é possível cancelar pedidos com status Em Preparação!";
                     response.Status = false;
                     return response;
                 }
 
-                pedido.StatusPedido = statusPedido;
+                pedido.StatusPedido = dto.StatusPedido;
+
+                if (dto.StatusPedido == StatusPedidoEnum.Cancelado)
+                    pedido.MotivoCancelamento = dto.MotivoCancelamento;
+
                 _appDbContext.Pedido.Update(pedido);
                 await _appDbContext.SaveChangesAsync();
 
@@ -335,6 +340,7 @@ namespace sistema_gerenciamento_pedidos.Services.Pedidos
                     ValorTotal = pedido.ValorTotal,
                     DataPedido = pedido.DataPedido,
                     StatusPedido = pedido.StatusPedido,
+                    MotivoCancelamento = pedido.MotivoCancelamento,
                     Cliente = new ClientePedidoResponse
                     {
                         Nome = pedido.Cliente.Nome,
@@ -359,6 +365,7 @@ namespace sistema_gerenciamento_pedidos.Services.Pedidos
                 };
                 response.Mensagem = "Status do pedido alterado com sucesso!";
                 response.Dados = pedidoResponse;
+                response.Status = true;
                 return response;
             }
             catch (Exception ex)

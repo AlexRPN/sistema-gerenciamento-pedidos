@@ -11,6 +11,7 @@ namespace sistema_gerenciamento_pedidos.Models.Pedidos
         public DateTime DataPedido { get; set; }
         public TipoPagamentoEnum TipoPagamento { get; set; }
         public StatusPedidoEnum StatusPedido { get; set; } = StatusPedidoEnum.EmPreparacao;
+        public string MotivoCancelamento { get; set; }
 
         //Relacionamento entre as tabelas CLIENTE x PEDIDO
         public int ClienteId { get; set; }
