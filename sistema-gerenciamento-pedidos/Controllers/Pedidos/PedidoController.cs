@@ -78,5 +78,19 @@ namespace sistema_gerenciamento_pedidos.Controllers.Pedidos
             var pedido = await _pedidoService.EditarPedido(pedidoEdicao);
             return Ok(pedido);
         }
+
+        /// <summary>
+        /// Altera o status do pedido
+        /// </summary>
+        /// <param name="id">Id do pedido</param>
+        /// <param name="novoStatus">Novo status</param>
+        /// <returns></returns>
+        [HttpPut("{id}/status")]
+        public async Task<ActionResult<ResponseModel<PedidoResponse>>> EditarStatusPedido(int id, [FromQuery] StatusPedidoEnum statusPedido)
+        {
+            var resultado = await _pedidoService.EditarStatusPedido(id, statusPedido);
+            return Ok(resultado);
+        }
+
     }
 }

@@ -297,6 +297,78 @@ namespace sistema_gerenciamento_pedidos.Services.Pedidos
             }
         }
 
+        public async Task<ResponseModel<PedidoResponse>> EditarStatusPedido(int id, StatusPedidoEnum statusPedido)
+        {
+            var response = new ResponseModel<PedidoResponse>();
+
+            try
+            {
+                var pedido = await _appDbContext.Pedido
+                    .Include(p => p.PedidoProdutos)
+                        .ThenInclude(pp => pp.Produto)
+                    .Include(p => p.Cliente)
+                        .ThenInclude(c => c.EnderecoCliente)
+                    .FirstOrDefaultAsync(p => p.Id == id);
+
+                if (pedido == null)
+                {
+                    response.Mensagem = "Pedido não localizado no sistema!";
+                    response.Status = false;
+                    return response;
+                }
+
+                // Só permite cancelar se estiver em preparação
+                if (statusPedido == StatusPedidoEnum.Cancelado && pedido.StatusPedido != StatusPedidoEnum.EmPreparacao)
+                {
+                    response.Mensagem = "Só é possível cancelar pedidos com status Em Preparação!";
+                    response.Status = false;
+                    return response;
+                }
+
+                pedido.StatusPedido = statusPedido;
+                _appDbContext.Pedido.Update(pedido);
+                await _appDbContext.SaveChangesAsync();
+
+                var pedidoResponse = new PedidoResponse
+                {
+                    Id = pedido.Id,
+                    ValorTotal = pedido.ValorTotal,
+                    DataPedido = pedido.DataPedido,
+                    StatusPedido = pedido.StatusPedido,
+                    Cliente = new ClientePedidoResponse
+                    {
+                        Nome = pedido.Cliente.Nome,
+                        Telefone = pedido.Cliente.Telefone,
+                        Endereco = pedido.Cliente.EnderecoCliente != null
+                            ? new EnderecoClienteResponse
+                            {
+                                Logradouro = pedido.Cliente.EnderecoCliente.Logradouro,
+                                Complemento = pedido.Cliente.EnderecoCliente.Complemento,
+                                Cep = pedido.Cliente.EnderecoCliente.Cep
+                            }
+                            : null
+                    },
+                    Produtos = pedido.PedidoProdutos.Select(pp => new PedidoProdutoResponse
+                    {
+                        ProdutoId = pp.ProdutoId,
+                        Quantidade = pp.Quantidade,
+                        Observacao = pp.Observacao,
+                        ValorUnitario = pp.ValorUnitario,
+                        NomeProduto = pp.Produto?.Nome
+                    }).ToList()
+                };
+                response.Mensagem = "Status do pedido alterado com sucesso!";
+                response.Dados = pedidoResponse;
+                return response;
+            }
+            catch (Exception ex)
+            {
+                response.Mensagem = ex.Message;
+                response.Status = false;
+                return response;
+            }
+        }
+
         public async Task<ResponseModel<PedidoResponse>> EditarPedido(PedidoEdicaoDto pedidoEdicaoDto)
         {
             var response = new ResponseModel<PedidoResponse>();
