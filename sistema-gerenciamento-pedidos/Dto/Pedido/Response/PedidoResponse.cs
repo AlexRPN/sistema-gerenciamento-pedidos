@@ -9,6 +9,7 @@ namespace sistema_gerenciamento_pedidos.Dto.Pedido.Response
     {
         public int Id { get; set; }
         public decimal ValorTotal { get; set; }
+        public TipoPagamentoEnum TipoPagamento { get; set; }
         public DateTime DataPedido { get; set; }
         public StatusPedidoEnum StatusPedido { get; set; }
         public ClientePedidoResponse Cliente { get; set; }

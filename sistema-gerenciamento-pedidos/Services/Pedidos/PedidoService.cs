@@ -129,6 +129,7 @@ namespace sistema_gerenciamento_pedidos.Services.Pedidos
                 PedidoModel pedido = new PedidoModel
                 {
                     ClienteId = pedidoCriacaoDto.ClienteId,
+                    TipoPagamento = pedidoCriacaoDto.TipoPagamento,
                     DataPedido = DateTime.Now,
                     StatusPedido = StatusPedidoEnum.EmPreparacao,
                     PedidoProdutos = new List<PedidoProdutoModel>(),
