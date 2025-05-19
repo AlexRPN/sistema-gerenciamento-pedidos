@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using sistema_gerenciamento_pedidos.Dto.Model.Response;
 using sistema_gerenciamento_pedidos.Dto.Pedido.Request;
 using sistema_gerenciamento_pedidos.Dto.Pedido.Response;
@@ -9,7 +10,7 @@ namespace sistema_gerenciamento_pedidos.Controllers.Pedidos
 {
     [Route("api/[controller]")]
     [ApiController]
-    //[Authorize]
+    [Authorize]
     public class PedidoController : ControllerBase
     {
         private readonly IPedidoService _pedidoService;
