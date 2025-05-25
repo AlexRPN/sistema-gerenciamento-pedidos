@@ -9,7 +9,7 @@ namespace sistema_gerenciamento_pedidos.Controllers.Produtos
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize]
+    //[Authorize]
     public class ProdutoController : ControllerBase
     {
         private readonly IProdutoService _produtoService;
