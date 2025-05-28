@@ -7,6 +7,7 @@ namespace sistema_gerenciamento_pedidos.Dto.Pedido.Request
     {
         public int ClienteId { get; set; }
         public TipoPagamentoEnum TipoPagamento { get; set; }
+        public TipoEntregaEnum TipoEntrega { get; set; }
         public List<PedidoProdutoCriacaoDto> PedidoProdutos { get; set; }
     }
 }

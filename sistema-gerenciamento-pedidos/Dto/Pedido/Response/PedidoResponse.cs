@@ -12,6 +12,7 @@ namespace sistema_gerenciamento_pedidos.Dto.Pedido.Response
         public TipoPagamentoEnum TipoPagamento { get; set; }
         public DateTime DataPedido { get; set; }
         public StatusPedidoEnum StatusPedido { get; set; }
+        public TipoEntregaEnum TipoEntrega { get; set; }
         public string MotivoCancelamento { get; set; }
         public ClientePedidoResponse Cliente { get; set; }
         public List<PedidoProdutoResponse> Produtos { get; set; } = new();

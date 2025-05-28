@@ -55,6 +55,7 @@ namespace sistema_gerenciamento_pedidos.Services.Pedidos
                     ValorTotal = pedido.ValorTotal,
                     DataPedido = pedido.DataPedido,
                     StatusPedido = pedido.StatusPedido,
+                    TipoEntrega = pedido.TipoEntrega,
                     MotivoCancelamento = pedido.MotivoCancelamento,
                     Cliente = new ClientePedidoResponse
                     {
@@ -131,6 +132,7 @@ namespace sistema_gerenciamento_pedidos.Services.Pedidos
                 {
                     ClienteId = pedidoCriacaoDto.ClienteId,
                     TipoPagamento = pedidoCriacaoDto.TipoPagamento,
+                    TipoEntrega = pedidoCriacaoDto.TipoEntrega,
                     DataPedido = DateTime.Now,
                     StatusPedido = StatusPedidoEnum.EmPreparacao,
                     PedidoProdutos = new List<PedidoProdutoModel>(),
