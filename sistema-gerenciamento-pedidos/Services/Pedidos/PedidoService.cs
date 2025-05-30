@@ -520,6 +520,7 @@ namespace sistema_gerenciamento_pedidos.Services.Pedidos
                     Id = p.Id,
                     ValorTotal = p.ValorTotal,
                     DataPedido = p.DataPedido,
+                    TipoEntrega = p.TipoEntrega,
                     StatusPedido = p.StatusPedido,
                     Cliente = new ClientePedidoResponse
                     {

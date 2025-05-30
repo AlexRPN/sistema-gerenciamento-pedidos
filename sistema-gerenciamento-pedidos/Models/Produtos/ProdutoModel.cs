@@ -11,7 +11,7 @@ namespace sistema_gerenciamento_pedidos.Models.Produtos
         public string Descricao { get; set; }
         public decimal Valor { get; set; }
         public CategoriaEnum Categoria { get; set; }
-        public TamanhoEnum Tamanho { get; set; }
+        public TamanhoEnum? Tamanho { get; set; }
         public SituacaoEnum Situacao { get; set; } = SituacaoEnum.Ativo;
         public DateTime DataCadastro { get; set; }
         public DateTime DataAlteracao { get; set; }

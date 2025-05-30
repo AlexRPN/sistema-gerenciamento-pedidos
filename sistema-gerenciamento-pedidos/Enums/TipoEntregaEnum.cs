@@ -3,6 +3,7 @@
     public enum TipoEntregaEnum
     {
         EntregaDomiciliar = 1,
-        RetiradaNoLocal = 2
+        RetiradaNoLocal = 2,
+        ConsumirNoLocal = 3
     }
 }

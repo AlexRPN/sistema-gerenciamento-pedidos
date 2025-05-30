@@ -90,6 +90,7 @@ namespace sistema_gerenciamento_pedidos.Services.Produtos
                     produto.Imagem = $"imagens/{nomeArquivo}";
                 }
 
+                produto.Tamanho ??= TamanhoEnum.NaoInformado;
                 produto.Empresa = await _appDbContext.Empresa.FirstOrDefaultAsync(e => e.Id == produtoCriacaoDto.EmpresaId);
                 produto.DataCadastro = DateTime.Now;
 
@@ -129,6 +130,7 @@ namespace sistema_gerenciamento_pedidos.Services.Produtos
 
                 _mapper.Map(produtoEdicaoDto, produtoBanco);
                 produtoBanco.DataAlteracao = DateTime.Now;
+                produtoBanco.Tamanho ??= TamanhoEnum.NaoInformado;
 
                 // Se houver nova imagem, salvar e atualizar o nome
                 if (imagem != null && imagem.Length > 0)
