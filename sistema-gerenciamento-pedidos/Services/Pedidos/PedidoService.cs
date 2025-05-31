@@ -53,6 +53,7 @@ namespace sistema_gerenciamento_pedidos.Services.Pedidos
                 {
                     Id = pedido.Id,
                     ValorTotal = pedido.ValorTotal,
+                    TipoPagamento = pedido.TipoPagamento,
                     DataPedido = pedido.DataPedido,
                     StatusPedido = pedido.StatusPedido,
                     TipoEntrega = pedido.TipoEntrega,
@@ -186,6 +187,7 @@ namespace sistema_gerenciamento_pedidos.Services.Pedidos
                 {
                     Id = pedidoCompleto.Id,
                     ValorTotal = pedidoCompleto.ValorTotal,
+                    TipoPagamento = pedidoCompleto.TipoPagamento,
                     DataPedido = pedidoCompleto.DataPedido,
                     StatusPedido = pedidoCompleto.StatusPedido,
                     Cliente = new ClientePedidoResponse
@@ -519,6 +521,7 @@ namespace sistema_gerenciamento_pedidos.Services.Pedidos
                 {
                     Id = p.Id,
                     ValorTotal = p.ValorTotal,
+                    TipoPagamento = p.TipoPagamento,
                     DataPedido = p.DataPedido,
                     TipoEntrega = p.TipoEntrega,
                     StatusPedido = p.StatusPedido,

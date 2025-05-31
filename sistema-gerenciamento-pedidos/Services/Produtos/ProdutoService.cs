@@ -219,7 +219,7 @@ namespace sistema_gerenciamento_pedidos.Services.Produtos
 
                 if (categoria.HasValue)
                 {
-                    produtosQuery = produtosQuery.Where(p => p.Categoria == categoria.Value);
+                    produtosQuery = produtosQuery.Where(p => p.Categoria == categoria.Value && p.Situacao != SituacaoEnum.Inativo);
                 }
 
                 var produtos = produtosQuery.ToList();

@@ -11,6 +11,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Profiles\NovaPasta\**" />
+    <Content Remove="Profiles\NovaPasta\**" />
+    <EmbeddedResource Remove="Profiles\NovaPasta\**" />
+    <None Remove="Profiles\NovaPasta\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="AutoMapper" Version="14.0.0" />
     <PackageReference Include="Hangfire" Version="1.8.18" />
     <PackageReference Include="Hangfire.AspNetCore" Version="1.8.18" />
