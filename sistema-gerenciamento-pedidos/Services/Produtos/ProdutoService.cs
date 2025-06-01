@@ -135,6 +135,7 @@ namespace sistema_gerenciamento_pedidos.Services.Produtos
                 // Se houver nova imagem, salvar e atualizar o nome
                 if (imagem != null && imagem.Length > 0)
                 {
+                    // Salva nova imagem
                     var pastaDestino = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "imagens");
 
                     if (!Directory.Exists(pastaDestino))
@@ -149,6 +150,11 @@ namespace sistema_gerenciamento_pedidos.Services.Produtos
                     }
 
                     produtoBanco.Imagem = $"imagens/{nomeImagem}";
+                }
+                else
+                {
+                    // Mantém a imagem anterior (enviada como string no DTO)
+                    produtoBanco.Imagem = produtoEdicaoDto.Imagem;
                 }
 
                 _appDbContext.Produto.Update(produtoBanco);
