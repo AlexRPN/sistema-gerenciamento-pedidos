@@ -27,8 +27,13 @@ namespace sistema_gerenciamento_pedidos.Controllers.Login
             return Ok(usuario);
         }
 
-        [HttpPost("alterar-senha")]
-        public async Task<IActionResult> AlterarSenha([FromQuery] AlterarSenhaDto dto)
+        /// <summary>
+        /// Altera a senha do usuário
+        /// </summary>
+        /// <param name="dto"></param>
+        /// <returns></returns>
+        [HttpPost("AlterarSenha")]
+        public async Task<IActionResult> AlterarSenha([FromBody] AlterarSenhaDto dto)
         {
             var novaSenha = await _funcionarioService.AlterarSenha(dto);
             return Ok(novaSenha);

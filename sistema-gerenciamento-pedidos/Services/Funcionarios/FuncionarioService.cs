@@ -337,7 +337,6 @@ namespace sistema_gerenciamento_pedidos.Services.Funcionarios
                 await _appDbContext.SaveChangesAsync();
 
                 response.Mensagem = "Senha alterada com sucesso!";
-                response.Status = true;
                 return response;
             }
             catch (Exception ex)
