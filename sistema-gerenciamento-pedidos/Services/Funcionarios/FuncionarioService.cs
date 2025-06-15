@@ -298,5 +298,55 @@ namespace sistema_gerenciamento_pedidos.Services.Funcionarios
                 return response;
             }
         }
+
+        public async Task<ResponseModel<string>> AlterarSenha(AlterarSenhaDto dto)
+        {
+            var response = new ResponseModel<string>();
+
+            try
+            {
+                var funcionario = await _appDbContext.Funcionario.FirstOrDefaultAsync(x => x.NomeUsuario == dto.NomeUsuario);
+
+                if (funcionario == null)
+                {
+                    response.Mensagem = "Usuário não localizado!";
+                    response.Status = false;
+                    return response;
+                }
+
+                if (!_senhaService.VerificaSenhaHash(dto.SenhaAtual, funcionario.SenhaHash, funcionario.SenhaSalt))
+                {
+                    response.Mensagem = "Senha atual incorreta!";
+                    response.Status = false;
+                    return response;
+                }
+
+                if (dto.NovaSenha != dto.ConfirmaNovaSenha)
+                {
+                    response.Mensagem = "A nova senha e a confirmação não conferem!";
+                    response.Status = false;
+                    return response;
+                }
+
+                _senhaService.CriarSenhaHash(dto.NovaSenha, out byte[] novaHash, out byte[] novoSalt);
+                funcionario.SenhaHash = novaHash;
+                funcionario.SenhaSalt = novoSalt;
+                funcionario.DataAlteracao = DateTime.Now;
+
+                _appDbContext.Update(funcionario);
+                await _appDbContext.SaveChangesAsync();
+
+                response.Mensagem = "Senha alterada com sucesso!";
+                response.Status = true;
+                return response;
+            }
+            catch (Exception ex)
+            {
+                response.Mensagem = ex.Message;
+                response.Status = false;
+                return response;
+            }
+        }
+
     }
 }

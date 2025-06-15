@@ -15,6 +15,7 @@ namespace sistema_gerenciamento_pedidos.Services.Funcionarios.Interfaces
         Task<ResponseModel<List<FuncionarioResponse>>> Listar(int? id, string? nome, string? telefone);
         Task<ResponseModel<FuncionarioResponse>> Inativar(int id);
         Task<ResponseModel<FuncionarioModel>> Login(LoginDto loginDto);
+        Task<ResponseModel<string>> AlterarSenha(AlterarSenhaDto dto);
 
     }
 }
