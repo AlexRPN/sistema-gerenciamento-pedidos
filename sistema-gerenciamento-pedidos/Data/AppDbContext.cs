@@ -7,6 +7,7 @@ using sistema_gerenciamento_pedidos.Models.Funcionarios;
 using sistema_gerenciamento_pedidos.Models.PedidoProduto;
 using sistema_gerenciamento_pedidos.Models.Pedidos;
 using sistema_gerenciamento_pedidos.Models.Produtos;
+using sistema_gerenciamento_pedidos.Models.TelefoneClientes;
 
 namespace sistema_gerenciamento_pedidos.Data
 {
@@ -24,6 +25,7 @@ namespace sistema_gerenciamento_pedidos.Data
         public DbSet<PedidoModel> Pedido { get; set; }
         public DbSet<ProdutoModel> Produto { get; set; }
         public DbSet<PedidoProdutoModel> PedidoProduto { get; set; }
+        public DbSet<TelefoneClienteDto> Telefone { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             // Configuração da tabela PedidoProduto

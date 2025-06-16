@@ -10,8 +10,8 @@ namespace sistema_gerenciamento_pedidos.Services.Cliente.Interfaces
     {
         Task<ResponseModel<ClienteResponse>> Cadastrar(ClienteCriacaoDto clienteCriacaoDto);
         Task<ResponseModel<List<ClienteResponse>>> Listar(int? id, string? nome, string? telefone);
-        Task<ResponseModel<ClienteModel>> Editar(ClienteEdicaoDto clienteEdicaoDto, EnderecoClienteEdicaoDto? enderecoClienteEdicaoDto);
+        Task<ResponseModel<ClienteResponse>> Editar(ClienteEdicaoDto clienteEdicaoDto, EnderecoClienteEdicaoDto? enderecoClienteEdicaoDto);
         Task<ResponseModel<ClienteResponse>> BuscarClientePorId(int id);
-        Task<ResponseModel<ClienteModel>> Inativar(int id);
+        Task<ResponseModel<ClienteResponse>> Inativar(int id);
     }
 }

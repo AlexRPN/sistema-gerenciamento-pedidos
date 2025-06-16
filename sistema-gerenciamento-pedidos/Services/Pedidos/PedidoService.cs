@@ -9,6 +9,7 @@ using sistema_gerenciamento_pedidos.Dto.Model.Response;
 using sistema_gerenciamento_pedidos.Dto.Pedido.Request;
 using sistema_gerenciamento_pedidos.Dto.Pedido.Response;
 using sistema_gerenciamento_pedidos.Dto.PedidoProduto.Response;
+using sistema_gerenciamento_pedidos.Dto.TelefoneCliente.Response;
 using sistema_gerenciamento_pedidos.Enums;
 using sistema_gerenciamento_pedidos.Models.PedidoProduto;
 using sistema_gerenciamento_pedidos.Models.Pedidos;
@@ -40,6 +41,7 @@ namespace sistema_gerenciamento_pedidos.Services.Pedidos
                     .Include(p => p.Cliente)
                         .ThenInclude(c => c.EnderecoCliente)
                         .Include(p => p.Cliente.Empresa)
+                        .Include(p => p.Cliente.TelefoneClientes)
                     .FirstOrDefaultAsync(p => p.Id == id);
 
                 if (pedido == null)
@@ -61,10 +63,16 @@ namespace sistema_gerenciamento_pedidos.Services.Pedidos
                     Cliente = new ClientePedidoResponse
                     {
                         Nome = pedido.Cliente.Nome,
-                        Telefone = pedido.Cliente.Telefone,
+                        Telefone = pedido.Cliente.TelefoneClientes != null
+                            ? new TelefoneClienteResponse
+                            {
+                                Telefone = pedido.Cliente.TelefoneClientes.Telefone
+                            }
+                            : null,
                         Endereco = pedido.Cliente.EnderecoCliente != null
                             ? new EnderecoClienteResponse
                             {
+                                Id = pedido.Cliente.EnderecoCliente.Id,
                                 Logradouro = pedido.Cliente.EnderecoCliente.Logradouro,
                                 Complemento = pedido.Cliente.EnderecoCliente.Complemento,
                                 Cep = pedido.Cliente.EnderecoCliente.Cep
@@ -72,15 +80,15 @@ namespace sistema_gerenciamento_pedidos.Services.Pedidos
                             : null
                     },
                     Empresa = pedido.Cliente.Empresa != null
-                    ? new EmpresaResponse
-                    {
-                        Id = pedido.Cliente.Empresa.Id,
-                        RazaoSocial = pedido.Cliente.Empresa.RazaoSocial,
-                        Cnpj = pedido.Cliente.Empresa.Cnpj,
-                        Telefone = pedido.Cliente.Empresa.Telefone,
-                        Situacao = pedido.Cliente.Empresa.Situacao.ToString()
-                    }
-                    : null,
+                        ? new EmpresaResponse
+                        {
+                            Id = pedido.Cliente.Empresa.Id,
+                            RazaoSocial = pedido.Cliente.Empresa.RazaoSocial,
+                            Cnpj = pedido.Cliente.Empresa.Cnpj,
+                            Telefone = pedido.Cliente.Empresa.Telefone,
+                            Situacao = pedido.Cliente.Empresa.Situacao.ToString()
+                        }
+                        : null,
                     Produtos = pedido.PedidoProdutos.Select(pp => new PedidoProdutoResponse
                     {
                         ProdutoId = pp.ProdutoId,
@@ -103,7 +111,6 @@ namespace sistema_gerenciamento_pedidos.Services.Pedidos
                 return response;
             }
         }
-
 
         public async Task<ResponseModel<PedidoResponse>> Cadastrar(PedidoCriacaoDto pedidoCriacaoDto)
         {
@@ -193,7 +200,12 @@ namespace sistema_gerenciamento_pedidos.Services.Pedidos
                     Cliente = new ClientePedidoResponse
                     {
                         Nome = pedidoCompleto.Cliente.Nome,
-                        Telefone = pedidoCompleto.Cliente.Telefone,
+                        Telefone = pedido.Cliente.TelefoneClientes != null
+                            ? new TelefoneClienteResponse
+                            {
+                                Telefone = pedido.Cliente.TelefoneClientes.Telefone
+                            }
+                            : null,
                         // Verificando se o EnderecoCliente é null
                         Endereco = pedidoCompleto.Cliente.EnderecoCliente != null
                             ? new EnderecoClienteResponse
@@ -204,6 +216,16 @@ namespace sistema_gerenciamento_pedidos.Services.Pedidos
                             }
                             : null
                     },
+                    Empresa = pedido.Cliente.Empresa != null
+                        ? new EmpresaResponse
+                        {
+                            Id = pedido.Cliente.Empresa.Id,
+                            RazaoSocial = pedido.Cliente.Empresa.RazaoSocial,
+                            Cnpj = pedido.Cliente.Empresa.Cnpj,
+                            Telefone = pedido.Cliente.Empresa.Telefone,
+                            Situacao = pedido.Cliente.Empresa.Situacao.ToString()
+                        }
+                        : null,
                     Produtos = pedidoCompleto.PedidoProdutos.Select(pp => new PedidoProdutoResponse
                     {
                         ProdutoId = pp.ProdutoId,
@@ -239,6 +261,7 @@ namespace sistema_gerenciamento_pedidos.Services.Pedidos
                         .ThenInclude(pp => pp.Produto)
                     .Include(p => p.Cliente)
                         .ThenInclude(c => c.EnderecoCliente)
+                        .Include(c => c.Cliente.TelefoneClientes)
                     .FirstOrDefaultAsync(p => p.Id == id);
 
                 if (pedido == null)
@@ -269,10 +292,16 @@ namespace sistema_gerenciamento_pedidos.Services.Pedidos
                     Cliente = new ClientePedidoResponse
                     {
                         Nome = pedido.Cliente.Nome,
-                        Telefone = pedido.Cliente.Telefone,
+                        Telefone = pedido.Cliente.TelefoneClientes != null
+                            ? new TelefoneClienteResponse
+                            {
+                                Telefone = pedido.Cliente.TelefoneClientes.Telefone
+                            }
+                            : null,
                         Endereco = pedido.Cliente.EnderecoCliente != null
                             ? new EnderecoClienteResponse
                             {
+                                Id = pedido.Cliente.EnderecoCliente.Id,
                                 Logradouro = pedido.Cliente.EnderecoCliente.Logradouro,
                                 Complemento = pedido.Cliente.EnderecoCliente.Complemento,
                                 Cep = pedido.Cliente.EnderecoCliente.Cep
@@ -313,6 +342,8 @@ namespace sistema_gerenciamento_pedidos.Services.Pedidos
                         .ThenInclude(pp => pp.Produto)
                     .Include(p => p.Cliente)
                         .ThenInclude(c => c.EnderecoCliente)
+                        .Include(c => c.Cliente.Empresa)
+                        .Include(c => c.Cliente.TelefoneClientes)
                     .FirstOrDefaultAsync(p => p.Id == dto.Id);
 
                 if (pedido == null)
@@ -344,20 +375,37 @@ namespace sistema_gerenciamento_pedidos.Services.Pedidos
                     ValorTotal = pedido.ValorTotal,
                     DataPedido = pedido.DataPedido,
                     StatusPedido = pedido.StatusPedido,
+                    TipoEntrega = pedido.TipoEntrega,
                     MotivoCancelamento = pedido.MotivoCancelamento,
                     Cliente = new ClientePedidoResponse
                     {
                         Nome = pedido.Cliente.Nome,
-                        Telefone = pedido.Cliente.Telefone,
+                        Telefone = pedido.Cliente.TelefoneClientes != null
+                            ? new TelefoneClienteResponse
+                            {
+                                Telefone = pedido.Cliente.TelefoneClientes.Telefone
+                            }
+                            : null,
                         Endereco = pedido.Cliente.EnderecoCliente != null
                             ? new EnderecoClienteResponse
                             {
+                                Id = pedido.Cliente.EnderecoCliente.Id,
                                 Logradouro = pedido.Cliente.EnderecoCliente.Logradouro,
                                 Complemento = pedido.Cliente.EnderecoCliente.Complemento,
                                 Cep = pedido.Cliente.EnderecoCliente.Cep
                             }
                             : null
                     },
+                    Empresa = pedido.Cliente.Empresa != null
+                        ? new EmpresaResponse
+                        {
+                            Id = pedido.Cliente.Empresa.Id,
+                            RazaoSocial = pedido.Cliente.Empresa.RazaoSocial,
+                            Cnpj = pedido.Cliente.Empresa.Cnpj,
+                            Telefone = pedido.Cliente.Empresa.Telefone,
+                            Situacao = pedido.Cliente.Empresa.Situacao.ToString()
+                        }
+                        : null,
                     Produtos = pedido.PedidoProdutos.Select(pp => new PedidoProdutoResponse
                     {
                         ProdutoId = pp.ProdutoId,
@@ -457,7 +505,10 @@ namespace sistema_gerenciamento_pedidos.Services.Pedidos
                     Cliente = new ClientePedidoResponse
                     {
                         Nome = pedidoAtualizado.Cliente.Nome,
-                        Telefone = pedidoAtualizado.Cliente.Telefone,
+                        Telefone = new TelefoneClienteResponse
+                        {
+                            Telefone = pedido.Cliente.TelefoneClientes.Telefone
+                        },
                         Endereco = pedidoAtualizado.Cliente.EnderecoCliente != null
                             ? new EnderecoClienteResponse
                             {
@@ -490,7 +541,6 @@ namespace sistema_gerenciamento_pedidos.Services.Pedidos
             }
         }
 
-
         public async Task<ResponseModel<List<PedidoResponse>>> Listar(StatusPedidoEnum? statusFiltro = null)
         {
             ResponseModel<List<PedidoResponse>> response = new ResponseModel<List<PedidoResponse>>();
@@ -502,6 +552,8 @@ namespace sistema_gerenciamento_pedidos.Services.Pedidos
                         .ThenInclude(pp => pp.Produto)
                     .Include(p => p.Cliente)
                         .ThenInclude(c => c.EnderecoCliente)
+                    .Include(p => p.Cliente.TelefoneClientes)
+                    .Include(p => p.Cliente.Empresa)
                     .AsQueryable();
 
                 if (statusFiltro.HasValue)
@@ -528,16 +580,32 @@ namespace sistema_gerenciamento_pedidos.Services.Pedidos
                     Cliente = new ClientePedidoResponse
                     {
                         Nome = p.Cliente.Nome,
-                        Telefone = p.Cliente.Telefone,
+                        Telefone = p.Cliente.TelefoneClientes != null
+                            ? new TelefoneClienteResponse
+                            {
+                                Telefone = p.Cliente.TelefoneClientes.Telefone
+                            }
+                            : null,
                         Endereco = p.Cliente.EnderecoCliente != null
                             ? new EnderecoClienteResponse
                             {
+                                Id = p.Cliente.EnderecoCliente.Id,
                                 Logradouro = p.Cliente.EnderecoCliente.Logradouro,
                                 Complemento = p.Cliente.EnderecoCliente.Complemento,
                                 Cep = p.Cliente.EnderecoCliente.Cep
                             }
                             : null
                     },
+                    Empresa = p.Cliente.Empresa != null
+                        ? new EmpresaResponse
+                        {
+                            Id = p.Cliente.Empresa.Id,
+                            RazaoSocial = p.Cliente.Empresa.RazaoSocial,
+                            Cnpj = p.Cliente.Empresa.Cnpj,
+                            Telefone = p.Cliente.Empresa.Telefone,
+                            Situacao = p.Cliente.Empresa.Situacao.ToString()
+                        }
+                        : null,
                     Produtos = p.PedidoProdutos.Select(pp => new PedidoProdutoResponse
                     {
                         ProdutoId = pp.ProdutoId,

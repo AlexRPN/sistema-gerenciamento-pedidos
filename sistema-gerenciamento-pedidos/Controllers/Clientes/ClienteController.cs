@@ -67,7 +67,7 @@ namespace sistema_gerenciamento_pedidos.Controllers.Clientes
         }
 
         /// <summary>
-        /// Inativa o cliente
+        /// Faz a inativação/ativação do cliente
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>

@@ -5,9 +5,11 @@ using sistema_gerenciamento_pedidos.Dto.Cliente.Request;
 using sistema_gerenciamento_pedidos.Dto.Cliente.Response;
 using sistema_gerenciamento_pedidos.Dto.EnderecoCliente.Request;
 using sistema_gerenciamento_pedidos.Dto.Model.Response;
+using sistema_gerenciamento_pedidos.Dto.TelefoneCliente.Request;
 using sistema_gerenciamento_pedidos.Enums;
 using sistema_gerenciamento_pedidos.Models.Clientes;
 using sistema_gerenciamento_pedidos.Models.EnderecoCliente;
+using sistema_gerenciamento_pedidos.Models.TelefoneClientes;
 using sistema_gerenciamento_pedidos.Services.Cliente.Interfaces;
 using sistema_gerenciamento_pedidos.Services.EnderecoCliente.Interface;
 
@@ -34,7 +36,11 @@ namespace sistema_gerenciamento_pedidos.Services.Cliente
 
             try
             {
-                var cliente = await _appDbContext.Cliente.FindAsync(id);
+                var cliente = await _appDbContext.Cliente
+                                                        .Include(c => c.TelefoneClientes)
+                                                        .Include(c => c.EnderecoCliente)
+                                                        .Include(c => c.Empresa)
+                                                        .FirstOrDefaultAsync(c => c.Id == id);
 
                 if (cliente == null)
                 {
@@ -64,7 +70,9 @@ namespace sistema_gerenciamento_pedidos.Services.Cliente
 
             try
             {
-                var clienteBanco = await _appDbContext.Cliente.FirstOrDefaultAsync(x => x.Telefone == clienteCriacaoDto.Telefone);
+                var clienteBanco = await _appDbContext.Cliente
+                    .Include(c => c.TelefoneClientes)
+                    .FirstOrDefaultAsync(tc => tc.TelefoneClientes.Telefone == clienteCriacaoDto.Telefone.Telefone);
 
                 if (clienteBanco != null)
                 {
@@ -84,12 +92,25 @@ namespace sistema_gerenciamento_pedidos.Services.Cliente
                     ClienteId = cliente.Id
                 };
 
-                cliente.EnderecoCliente = _mapper.Map<EnderecoClienteModel>(enderecoCliente);
-                cliente.DataCadastro = DateTime.Now;
+                var telefoneCliente = new TelefoneClienteDto
+                {
+                    Telefone = clienteCriacaoDto.Telefone.Telefone,
+                    ClienteId = cliente.Id
+                };
 
+                cliente.EnderecoCliente = _mapper.Map<EnderecoClienteModel>(enderecoCliente);
+                cliente.TelefoneClientes = _mapper.Map<TelefoneClienteDto>(telefoneCliente);
+
+                cliente.DataCadastro = DateTime.Now;
 
                 _appDbContext.Add(cliente);
                 await _appDbContext.SaveChangesAsync();
+
+                var clienteComTelefones = await _appDbContext.Cliente
+                                                             .Include(c => c.TelefoneClientes)
+                                                             .Include(c => c.EnderecoCliente)
+                                                             .Include(c => c.Empresa)
+                                                             .FirstOrDefaultAsync(c => c.Id == cliente.Id);
 
                 ClienteResponse clienteResponse = _mapper.Map<ClienteResponse>(cliente);
 
@@ -108,14 +129,16 @@ namespace sistema_gerenciamento_pedidos.Services.Cliente
             }
         }
 
-        public async Task<ResponseModel<ClienteModel>> Editar(ClienteEdicaoDto clienteEdicaoDto, EnderecoClienteEdicaoDto? enderecoClienteEdicaoDto)
+        public async Task<ResponseModel<ClienteResponse>> Editar(ClienteEdicaoDto clienteEdicaoDto, EnderecoClienteEdicaoDto? enderecoClienteEdicaoDto)
         {
-            ResponseModel<ClienteModel> response = new ResponseModel<ClienteModel>();
+            var response = new ResponseModel<ClienteResponse>();
 
             try
             {
                 var cliente = await _appDbContext.Cliente
                                                  .Include(c => c.EnderecoCliente)
+                                                 .Include(c => c.TelefoneClientes)
+                                                 .Include(c => c.Empresa)
                                                  .FirstOrDefaultAsync(c => c.Id == clienteEdicaoDto.Id);
 
                 if (cliente == null)
@@ -125,7 +148,7 @@ namespace sistema_gerenciamento_pedidos.Services.Cliente
                 }
 
                 cliente.Nome = clienteEdicaoDto.Nome;
-                cliente.Telefone = clienteEdicaoDto.Telefone;
+                cliente.TelefoneClientes.Telefone = clienteEdicaoDto.Telefone.Telefone;
                 cliente.DataAlteracao = DateTime.Now;
 
                 if (enderecoClienteEdicaoDto != null)
@@ -147,7 +170,7 @@ namespace sistema_gerenciamento_pedidos.Services.Cliente
                 await _appDbContext.SaveChangesAsync();
 
                 response.Mensagem = "Dados alterados com sucesso!";
-                response.Dados = cliente;
+                response.Dados = _mapper.Map<ClienteResponse>(cliente);
 
                 return response;
             }
@@ -159,14 +182,17 @@ namespace sistema_gerenciamento_pedidos.Services.Cliente
             }
         }
 
-        public async Task<ResponseModel<ClienteModel>> Inativar(int id)
+        public async Task<ResponseModel<ClienteResponse>> Inativar(int id)
         {
-
-            var response = new ResponseModel<ClienteModel>();
+            var response = new ResponseModel<ClienteResponse>();
 
             try
             {
-                var cliente = await _appDbContext.Cliente.FindAsync(id);
+                var cliente = await _appDbContext.Cliente
+                    .Include(c => c.TelefoneClientes)
+                    .Include(c => c.EnderecoCliente)
+                    .Include(c => c.Empresa)
+                    .FirstOrDefaultAsync(c => c.Id == id);
 
                 if (cliente == null)
                 {
@@ -182,10 +208,10 @@ namespace sistema_gerenciamento_pedidos.Services.Cliente
                 _appDbContext.Cliente.Update(cliente);
                 await _appDbContext.SaveChangesAsync();
 
-                response.Dados = cliente;
+                response.Dados = _mapper.Map<ClienteResponse>(cliente);
                 response.Mensagem = cliente.Situacao == SituacaoEnum.Ativo
-                    ? "Cliente ativada com sucesso!"
-                    : "Cliente inativada com sucesso!";
+                    ? "Cliente ativado com sucesso!"
+                    : "Cliente inativado com sucesso!";
 
                 return response;
             }
@@ -205,6 +231,7 @@ namespace sistema_gerenciamento_pedidos.Services.Cliente
             {
                 var query = _appDbContext.Cliente
                     .Include(e => e.EnderecoCliente)
+                    .Include(e => e.TelefoneClientes)
                     .Include(e => e.Empresa)
                     .AsQueryable();
 
@@ -215,7 +242,7 @@ namespace sistema_gerenciamento_pedidos.Services.Cliente
                     query = query.Where(c => c.Nome.Contains(nome));
 
                 if (!string.IsNullOrWhiteSpace(telefone))
-                    query = query.Where(c => c.Telefone.Contains(telefone));
+                    query = query.Where(c => c.TelefoneClientes == c.TelefoneClientes);
 
                 var clientes = await query.ToListAsync();
 
