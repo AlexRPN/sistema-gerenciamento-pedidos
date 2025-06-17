@@ -242,7 +242,7 @@ namespace sistema_gerenciamento_pedidos.Services.Cliente
                     query = query.Where(c => c.Nome.Contains(nome));
 
                 if (!string.IsNullOrWhiteSpace(telefone))
-                    query = query.Where(c => c.TelefoneClientes == c.TelefoneClientes);
+                    query = query.Where(c => c.TelefoneClientes != null && c.TelefoneClientes.Telefone == telefone);
 
                 var clientes = await query.ToListAsync();
 
