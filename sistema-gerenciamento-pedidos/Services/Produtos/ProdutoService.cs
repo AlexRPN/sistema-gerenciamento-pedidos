@@ -221,7 +221,7 @@ namespace sistema_gerenciamento_pedidos.Services.Produtos
 
             try
             {
-                var produtosQuery = _appDbContext.Produto.AsQueryable();
+                var produtosQuery = _appDbContext.Produto.Include(x => x.Empresa).AsQueryable();
 
                 if (categoria.HasValue)
                 {
